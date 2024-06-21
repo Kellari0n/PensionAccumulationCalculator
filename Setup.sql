@@ -7,20 +7,22 @@ GO
 USE PensionAccumulationCalculator
 GO
 
-CREATE TABLE Users (
-	User_id INT PRIMARY KEY IDENTITY(1,1),
-	Login NVARCHAR(50),
-	Password NVARCHAR(32)
-);
-
 CREATE TABLE Clients (
 	User_id INT PRIMARY KEY IDENTITY(1,1),
 	Second_name NVARCHAR(30),
 	First_name NVARCHAR(30),
 	Last_name NVARCHAR(30),
 	Phone_number NVARCHAR(15),
-	Email NVARCHAR(50)
+	Email NVARCHAR(50),
 );
+
+CREATE TABLE Users (
+	User_id INT PRIMARY KEY IDENTITY(1,1),
+	Login NVARCHAR(50),
+	Password NVARCHAR(32),
+	FOREIGN KEY (User_id) REFERENCES Clients(User_id)
+);
+
 
 CREATE TABLE Ref_coefficients_cost_by_year (
 	Year INT PRIMARY KEY IDENTITY(1,1),
@@ -32,7 +34,8 @@ CREATE TABLE Work_records (
 	User_id INT,
 	Individual_pension_coefficient DECIMAL(6,2),
 	Year INT,
-	FOREIGN KEY (User_id) REFERENCES Users(User_id)
+	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
+	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Insurance_record (
@@ -40,7 +43,8 @@ CREATE TABLE Insurance_record (
 	User_id INT,
 	Individual_pension_coefficient DECIMAL(6,2),
 	Year INT,
-	FOREIGN KEY (User_id) REFERENCES Users(User_id)
+	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
+	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Military_record (
@@ -48,7 +52,8 @@ CREATE TABLE Military_record (
 	User_id INT,
 	Individual_pension_coefficient DECIMAL(6,2),
 	Year INT,
-	FOREIGN KEY (User_id) REFERENCES Users(User_id)
+	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
+	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Individual_pencion_coefficient_accumulation (
@@ -56,6 +61,7 @@ CREATE TABLE Individual_pencion_coefficient_accumulation (
 	User_id INT,
 	Individual_pension_coefficient DECIMAL(6,2),
 	Year INT,
-	FOREIGN KEY (User_id) REFERENCES Users(User_id)
+	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
+	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
