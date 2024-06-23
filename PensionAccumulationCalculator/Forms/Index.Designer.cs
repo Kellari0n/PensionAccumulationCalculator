@@ -86,12 +86,13 @@
             // ForgotYourPasswordLinkLabel
             // 
             ForgotYourPasswordLinkLabel.AutoSize = true;
-            ForgotYourPasswordLinkLabel.Location = new Point(100, 205);
+            ForgotYourPasswordLinkLabel.Location = new Point(100, 207);
             ForgotYourPasswordLinkLabel.Name = "ForgotYourPasswordLinkLabel";
             ForgotYourPasswordLinkLabel.Size = new Size(98, 15);
             ForgotYourPasswordLinkLabel.TabIndex = 6;
             ForgotYourPasswordLinkLabel.TabStop = true;
             ForgotYourPasswordLinkLabel.Text = "Забыли пароль?";
+            ForgotYourPasswordLinkLabel.Visible = false;
             // 
             // Index
             // 
