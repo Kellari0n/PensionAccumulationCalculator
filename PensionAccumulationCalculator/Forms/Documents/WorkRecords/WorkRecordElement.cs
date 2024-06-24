@@ -8,9 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PensionAccumulationCalculator.Forms {
-    public partial class Index : Form {
-        public Index() {
+namespace PensionAccumulationCalculator.Forms
+{
+    public partial class WorkRecordElement : Form
+    {
+        public WorkRecordElement()
+        {
             InitializeComponent();
         }
     }

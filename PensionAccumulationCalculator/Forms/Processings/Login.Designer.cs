@@ -1,5 +1,5 @@
 ﻿namespace PensionAccumulationCalculator.Forms {
-    partial class Index {
+    partial class Login {
         /// <summary>
         /// Required designer variable.
         /// </summary>

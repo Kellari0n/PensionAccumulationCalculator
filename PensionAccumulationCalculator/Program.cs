@@ -3,7 +3,7 @@ namespace PensionAccumulationCalculator {
         [STAThread]
         static void Main() {
             ApplicationConfiguration.Initialize();
-            Application.Run(new Forms.Index());
+            Application.Run(new Forms.Login());
         }
     }
 }
