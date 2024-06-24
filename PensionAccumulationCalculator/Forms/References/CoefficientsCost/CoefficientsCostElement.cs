@@ -16,5 +16,10 @@ namespace PensionAccumulationCalculator.Forms.CoefficientsCost
         {
             InitializeComponent();
         }
+
+        private void CoefficientsCostElement_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

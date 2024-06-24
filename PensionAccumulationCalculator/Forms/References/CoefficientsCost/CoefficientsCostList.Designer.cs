@@ -96,7 +96,7 @@
             Controls.Add(Add);
             Controls.Add(dataGridView1);
             Name = "CoefficientsCostList";
-            Text = "Стоимость ИПК";
+            Text = "Стоимость ИПК по годам";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
