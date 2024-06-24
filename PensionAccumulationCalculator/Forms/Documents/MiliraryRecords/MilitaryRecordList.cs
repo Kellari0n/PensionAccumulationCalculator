@@ -16,5 +16,10 @@ namespace PensionAccumulationCalculator.Forms.MiliraryRecord
         {
             InitializeComponent();
         }
+
+        private void ExitToMenu_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

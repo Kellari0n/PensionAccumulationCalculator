@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PensionAccumulationCalculator.Forms
+namespace PensionAccumulationCalculator.Forms.Documents.MiliraryRecords
 {
-    public partial class MilitaryRecordElement : Form
+    public partial class MilitaryRecordsElement : Form
     {
-        public MilitaryRecordElement()
+        public MilitaryRecordsElement()
         {
             InitializeComponent();
         }

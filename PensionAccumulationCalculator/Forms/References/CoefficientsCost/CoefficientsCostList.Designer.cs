@@ -28,12 +28,85 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "CoefficientsCostList";
+            dataGridView1 = new DataGridView();
+            Add = new Button();
+            Edit = new Button();
+            Delete = new Button();
+            ExitToMenu = new Button();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            SuspendLayout();
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(12, 12);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new Size(960, 468);
+            dataGridView1.TabIndex = 0;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            // 
+            // Add
+            // 
+            Add.Location = new Point(443, 497);
+            Add.Name = "Add";
+            Add.Size = new Size(163, 52);
+            Add.TabIndex = 1;
+            Add.Text = "Добавить";
+            Add.UseVisualStyleBackColor = true;
+            Add.Click += Add_Click;
+            // 
+            // Edit
+            // 
+            Edit.Location = new Point(622, 497);
+            Edit.Name = "Edit";
+            Edit.Size = new Size(163, 52);
+            Edit.TabIndex = 2;
+            Edit.Text = "Редактировать";
+            Edit.UseVisualStyleBackColor = true;
+            Edit.Click += Edit_Click;
+            // 
+            // Delete
+            // 
+            Delete.Location = new Point(800, 497);
+            Delete.Name = "Delete";
+            Delete.Size = new Size(163, 52);
+            Delete.TabIndex = 2;
+            Delete.Text = "Удалить";
+            Delete.UseVisualStyleBackColor = true;
+            Delete.Click += Delete_Click;
+            // 
+            // ExitToMenu
+            // 
+            ExitToMenu.Location = new Point(22, 497);
+            ExitToMenu.Name = "ExitToMenu";
+            ExitToMenu.Size = new Size(163, 52);
+            ExitToMenu.TabIndex = 3;
+            ExitToMenu.Text = "В меню";
+            ExitToMenu.UseVisualStyleBackColor = true;
+            ExitToMenu.Click += ExitToMenu_Click;
+            // 
+            // CoefficientsCostList
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(984, 561);
+            Controls.Add(ExitToMenu);
+            Controls.Add(Delete);
+            Controls.Add(Edit);
+            Controls.Add(Add);
+            Controls.Add(dataGridView1);
+            Name = "CoefficientsCostList";
+            Text = "Стоимость ИПК";
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private DataGridView dataGridView1;
+        private Button Add;
+        private Button Edit;
+        private Button Delete;
+        private Button ExitToMenu;
     }
 }

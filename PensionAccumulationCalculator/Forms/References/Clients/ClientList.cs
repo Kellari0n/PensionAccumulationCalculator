@@ -16,5 +16,25 @@ namespace PensionAccumulationCalculator.Forms.ClientProfile
         {
             InitializeComponent();
         }
+
+        private void Add_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Edit_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Delete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ExitToMenu_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
