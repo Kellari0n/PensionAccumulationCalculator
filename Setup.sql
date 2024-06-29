@@ -14,8 +14,6 @@ CREATE TABLE Ref_tables (
 	table_name NVARCHAR(50)
 );
 
-SET IDENTITY_INSERT dbo.Ref_tables ON;  
-
 CREATE TABLE Clients (
 	User_id INT PRIMARY KEY IDENTITY(1,1),
 	Second_name NVARCHAR(30),
@@ -85,6 +83,8 @@ CREATE TABLE Error_logs (
 );
 GO
 
+SET IDENTITY_INSERT dbo.Ref_tables ON;  
+
 INSERT Ref_tables(table_id, table_name)
 VALUES
 	(1, 'Users'),
@@ -94,6 +94,8 @@ VALUES
 	(5, 'Military_record'),
 	(6, 'Individual_pencion_coefficient_accumulation'),
 	(7, 'Ref_coefficients_cost_by_year');
+
+SET IDENTITY_INSERT dbo.Ref_tables OFF;  
 
 GO
 
@@ -633,6 +635,7 @@ CREATE PROCEDURE dbo.CreateRefCoefficientCostByYear
 AS
 BEGIN
 	SET NOCOUNT ON;
+	SET IDENTITY_INSERT dbo.Ref_coefficients_cost_by_year ON;
 	BEGIN TRY
 		INSERT Ref_coefficients_cost_by_year(Year, Cost)
 		VALUES (@year, @cost);
@@ -643,6 +646,7 @@ BEGIN
 
 		DBCC CHECKIDENT ('Ref_coefficients_cost_by_year', RESEED);
 	END CATCH
+	SET IDENTITY_INSERT dbo.Ref_coefficients_cost_by_year OFF;
 END
 GO 
 
