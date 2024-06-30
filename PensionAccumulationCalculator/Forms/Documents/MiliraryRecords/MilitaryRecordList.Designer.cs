@@ -63,10 +63,10 @@
             Edit.Text = "Редактировать";
             Edit.UseVisualStyleBackColor = true;
             // 
-            // Delete
+            // TryDelete
             // 
             Delete.Location = new Point(800, 497);
-            Delete.Name = "Delete";
+            Delete.Name = "TryDelete";
             Delete.Size = new Size(163, 52);
             Delete.TabIndex = 3;
             Delete.Text = "Удалить";

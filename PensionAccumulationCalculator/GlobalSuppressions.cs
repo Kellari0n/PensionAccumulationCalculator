@@ -5,4 +5,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>", Scope = "member", Target = "~M:PensionAccumulationCalculator.Repos.Implementations.UserRepo.Create")]
+[assembly: SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>", Scope = "member", Target = "~M:PensionAccumulationCalculator.Repos.Implementations.UserRepo.TryCreateAsync")]
+[assembly: SuppressMessage("Style", "IDE0028:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~M:PensionAccumulationCalculator.Repos.Implementations.UserRepo.GetAllAsync~System.Threading.Tasks.Task{System.Collections.Generic.ICollection{PensionAccumulationCalculator.Entities.User}}")]
+[assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>", Scope = "member", Target = "~M:PensionAccumulationCalculator.Services.Implementations.UserService.#ctor(System.IServiceProvider)")]
+[assembly: SuppressMessage("Style", "IDE0290:Use primary constructor", Justification = "<Pending>", Scope = "member", Target = "~M:PensionAccumulationCalculator.Services.Implementations.UserService.#ctor(PensionAccumulationCalculator.Repos.Interfaces.IUserRepo)")]

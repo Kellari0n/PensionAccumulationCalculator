@@ -103,14 +103,19 @@ GO
 
 CREATE PROCEDURE dbo.CreateUser
 	@login NVARCHAR(50),
-	@password NVARCHAR(32)
+	@password NVARCHAR(32),
+	@second_name NVARCHAR(30) = '',
+	@first_name NVARCHAR(30) = '',
+	@last_name NVARCHAR(30) = '',
+	@phone_number NVARCHAR(30) = '',
+	@email NVARCHAR(30) = ''
 AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
 		BEGIN TRAN
-			INSERT Clients(Second_name, First_name, Last_name)
-			VALUES ('', '', '');
+			INSERT Clients(Second_name, First_name, Last_name, Phone_number, Email)
+			VALUES (@second_name, @first_name, @last_name, @phone_number, @email);
 
 			INSERT Users(Login, Password)
 			VALUES (@login, @password);

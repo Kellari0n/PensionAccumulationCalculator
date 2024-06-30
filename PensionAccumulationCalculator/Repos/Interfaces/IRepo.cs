@@ -2,10 +2,10 @@
 {
     internal interface IRepo<EntityT>
     {
-        public void Create(EntityT entity);
-        public EntityT GetEntity(int id);
-        public ICollection<EntityT> GetEntities();
-        public void Update(EntityT entity);
-        public void Delete(int id);
+        public Task CreateAsync(EntityT entity);
+        public Task<EntityT> GetByIdAsync(int id);
+        public Task<ICollection<EntityT>> GetAllAsync();
+        public Task UpdateAsync(EntityT entity);
+        public Task DeleteAsync(int id);
     }
 }

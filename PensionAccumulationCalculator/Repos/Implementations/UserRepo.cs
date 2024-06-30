@@ -9,9 +9,9 @@ using System.Data;
 namespace PensionAccumulationCalculator.Repos.Implementations {
     internal class UserRepo : IUserRepo {
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-        public async void Create(User user) {
+        public async Task CreateAsync(User user) {
             using (var connection = new SqlConnection(_connectionString)) {
-                connection.Open();
+                await connection.OpenAsync();
                 using (var cmd = new SqlCommand("dbo.CreateUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@login", user.Login));
@@ -24,31 +24,48 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
             }
         }
 
-        public async void Delete(int id) {
+        public async Task CreateAsync(User user, Client client) {
             using (var connection = new SqlConnection(_connectionString)) {
-                connection.Open();
-                using (var cmd = new SqlCommand("dbo.DeleteUser", connection)) {
+                await connection.OpenAsync();
+                using (var cmd = new SqlCommand("dbo.CreateUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@id", id)); 
+                    cmd.Parameters.Add(new SqlParameter("@login", user.Login));
+                    cmd.Parameters.Add(new SqlParameter("@password", user.Password));
+                    cmd.Parameters.Add(new SqlParameter("@second_name", client.Second_name));
+                    cmd.Parameters.Add(new SqlParameter("@first_name", client.First_name));
+                    cmd.Parameters.Add(new SqlParameter("@last_name", client.Last_name));
+                    cmd.Parameters.Add(new SqlParameter("@phone_number", client.Phone_number));
+                    cmd.Parameters.Add(new SqlParameter("@email", client.Email));
 
-                    using (var reader = cmd.ExecuteReaderAsync()) {
-                        await reader;
-                    }
+                    await cmd.ExecuteReaderAsync();
                 }
             }
         }
 
-        public ICollection<User> GetEntities() {
+        public async Task DeleteAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
-                connection.Open();
+                await connection.OpenAsync();
+                using (var cmd = new SqlCommand("dbo.DeleteUser", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@id", id)); 
+
+                    await cmd.ExecuteReaderAsync();
+                }
+            }
+        }
+
+        public async Task<ICollection<User>> GetAllAsync() {
+            using (var connection = new SqlConnection(_connectionString)) {
+                await connection.OpenAsync();
                 using (var cmd = new SqlCommand("dbo.GetAllUsers", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    using (var reader = cmd.ExecuteReader()) {
-                        ICollection<User> entities = new List<User>();
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        var entities = new List<User>();
 
-                        while (reader.Read()) {
+                        while (await reader.ReadAsync()) {
                             entities.Add(new User { 
+                                User_id = reader.GetInt32(0),
                                 Login = ((IDataRecord)reader)[1].ToString() ?? string.Empty, 
                                 Password = ((IDataRecord)reader)[2].ToString() ?? string.Empty 
                             });
@@ -59,15 +76,40 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
             }
         }
 
-        public User GetEntity(int id) {
+        public async Task<ICollection<Client>> GetClientsAsync() {
             using (var connection = new SqlConnection(_connectionString)) {
-                connection.Open();
+                await connection.OpenAsync();
+                using (var cmd = new SqlCommand("dbo.GetAllClients", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        var entities = new List<Client>();
+
+                        while (await reader.ReadAsync()) {
+                            entities.Add(new Client {
+                                User_id = reader.GetInt32(0),
+                                Second_name = ((IDataRecord)reader)[1].ToString() ?? string.Empty,
+                                First_name = ((IDataRecord)reader)[2].ToString() ?? string.Empty,
+                                Last_name = ((IDataRecord)reader)[3].ToString() ?? string.Empty,
+                                Phone_number = ((IDataRecord)reader)[4].ToString() ?? string.Empty,
+                                Email = ((IDataRecord)reader)[5].ToString() ?? string.Empty,
+                            });
+                        }
+                        return entities;
+                    }
+                }
+            }
+        }
+
+        public async Task<User> GetByIdAsync(int id) {
+            using (var connection = new SqlConnection(_connectionString)) {
+                await connection.OpenAsync();
                 using (var cmd = new SqlCommand("dbo.GetUserById", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    using (var reader = cmd.ExecuteReader()) {
-                        reader.Read();
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
                         
                         return new User {
                             Login = ((IDataRecord)reader)[1].ToString() ?? string.Empty,
@@ -78,18 +120,56 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
             }
         }
 
-        public async void Update(User user) {
+        public async Task<Client> GetClientByIdAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
-                connection.Open();
+                await connection.OpenAsync();
+                using (var cmd = new SqlCommand("dbo.GetClientByIdAsync", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        return new Client {
+                            User_id = reader.GetInt32(0),
+                            Second_name = ((IDataRecord)reader)[1].ToString() ?? string.Empty,
+                            First_name = ((IDataRecord)reader)[2].ToString() ?? string.Empty,
+                            Last_name = ((IDataRecord)reader)[3].ToString() ?? string.Empty,
+                            Phone_number = ((IDataRecord)reader)[4].ToString() ?? string.Empty,
+                            Email = ((IDataRecord)reader)[5].ToString() ?? string.Empty,
+                        };
+                    }
+                }
+            }
+        }
+
+        public async Task UpdateAsync(User user) {
+            using (var connection = new SqlConnection(_connectionString)) {
+                await connection.OpenAsync();
                 using (var cmd = new SqlCommand("dbo.UpdateUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", user.User_id));
                     cmd.Parameters.Add(new SqlParameter("@login", user.Login));
                     cmd.Parameters.Add(new SqlParameter("@password", user.Password));
 
-                    using (var reader = cmd.ExecuteReaderAsync()) {
-                        await reader;
-                    }
+                    await cmd.ExecuteReaderAsync();
+                }
+            }
+        }
+
+        public async Task UpdateClientAsync(Client client) {
+            using (var connection = new SqlConnection(_connectionString)) {
+                await connection.OpenAsync();
+                using (var cmd = new SqlCommand("dbo.UpdateClientAsync", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@id", client.User_id));
+                    cmd.Parameters.Add(new SqlParameter("@second_name", client.Second_name));
+                    cmd.Parameters.Add(new SqlParameter("@first_name", client.First_name));
+                    cmd.Parameters.Add(new SqlParameter("@last_name", client.Last_name));
+                    cmd.Parameters.Add(new SqlParameter("@phone_number", client.Phone_number));
+                    cmd.Parameters.Add(new SqlParameter("@email", client.Email));
+
+                    await cmd.ExecuteReaderAsync();
                 }
             }
         }

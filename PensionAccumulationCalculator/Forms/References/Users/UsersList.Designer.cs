@@ -26,23 +26,22 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
-            dataGridView1 = new DataGridView();
+        private void InitializeComponent() {
+            dataGridView = new DataGridView();
             Add = new Button();
             Edit = new Button();
             Delete = new Button();
             ExitToMenu = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
-            // dataGridView1
+            // dataGridView
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 12);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(960, 468);
-            dataGridView1.TabIndex = 0;
+            dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView.Location = new Point(12, 12);
+            dataGridView.Name = "dataGridView";
+            dataGridView.Size = new Size(960, 468);
+            dataGridView.TabIndex = 0;
             // 
             // Add
             // 
@@ -64,10 +63,10 @@
             Edit.UseVisualStyleBackColor = true;
             Edit.Click += Edit_Click;
             // 
-            // Delete
+            // TryDelete
             // 
             Delete.Location = new Point(800, 497);
-            Delete.Name = "Delete";
+            Delete.Name = "TryDelete";
             Delete.Size = new Size(163, 52);
             Delete.TabIndex = 3;
             Delete.Text = "Удалить";
@@ -93,16 +92,17 @@
             Controls.Add(Delete);
             Controls.Add(Edit);
             Controls.Add(Add);
-            Controls.Add(dataGridView1);
+            Controls.Add(dataGridView);
             Name = "UsersList";
             Text = "Пользователи";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            Load += UsersList_Load;
+            ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private DataGridView dataGridView1;
+        private DataGridView dataGridView;
         private Button Add;
         private Button Edit;
         private Button Delete;
