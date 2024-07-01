@@ -123,7 +123,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
         public async Task<Client> GetClientByIdAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
                 await connection.OpenAsync();
-                using (var cmd = new SqlCommand("dbo.GetClientByIdAsync", connection)) {
+                using (var cmd = new SqlCommand("dbo.GetClientById", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -160,7 +160,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
         public async Task UpdateClientAsync(Client client) {
             using (var connection = new SqlConnection(_connectionString)) {
                 await connection.OpenAsync();
-                using (var cmd = new SqlCommand("dbo.UpdateClientAsync", connection)) {
+                using (var cmd = new SqlCommand("dbo.UpdateClient", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", client.User_id));
                     cmd.Parameters.Add(new SqlParameter("@second_name", client.Second_name));
