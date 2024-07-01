@@ -58,7 +58,7 @@ namespace PensionAccumulationCalculator.Forms.Users {
                         //MessageBox.Show();
                     }
                 }
-                UpdateList();
+                await UpdateList();
             }
         }
 

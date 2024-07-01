@@ -17,9 +17,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                     cmd.Parameters.Add(new SqlParameter("@login", user.Login));
                     cmd.Parameters.Add(new SqlParameter("@password", user.Password));
                     
-                    using (var reader = cmd.ExecuteReaderAsync()) {
-                        await reader;
-                    }
+                    await cmd.ExecuteReaderAsync();
                 }
             }
         }

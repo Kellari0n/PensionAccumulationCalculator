@@ -10,15 +10,12 @@ using System.Windows.Forms;
 
 namespace PensionAccumulationCalculator.Forms.InsuranceRecord
 {
-    public partial class InsuraceRecordList : Form
-    {
-        public InsuraceRecordList()
-        {
+    public partial class InsuranceRecordList : Form {
+        public InsuranceRecordList() {
             InitializeComponent();
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
+        private void InsuranceRecordList_Load(object sender, EventArgs e) {
 
         }
     }

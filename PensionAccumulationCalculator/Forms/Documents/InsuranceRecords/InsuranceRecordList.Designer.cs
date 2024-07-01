@@ -1,6 +1,6 @@
 ﻿namespace PensionAccumulationCalculator.Forms.InsuranceRecord
 {
-    partial class InsuraceRecordList
+    partial class InsuranceRecordList
     {
         /// <summary>
         /// Required designer variable.
@@ -26,8 +26,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             dataGridView1 = new DataGridView();
             Add = new Button();
             Edit = new Button();
@@ -62,10 +61,10 @@
             Edit.Text = "Редактировать";
             Edit.UseVisualStyleBackColor = true;
             // 
-            // TryDelete
+            // Delete
             // 
             Delete.Location = new Point(800, 497);
-            Delete.Name = "TryDelete";
+            Delete.Name = "Delete";
             Delete.Size = new Size(163, 52);
             Delete.TabIndex = 3;
             Delete.Text = "Удалить";
@@ -80,7 +79,7 @@
             ExitToMenu.Text = "В меню";
             ExitToMenu.UseVisualStyleBackColor = true;
             // 
-            // InsuraceRecordList
+            // InsuranceRecordList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -90,8 +89,9 @@
             Controls.Add(Edit);
             Controls.Add(Add);
             Controls.Add(dataGridView1);
-            Name = "InsuraceRecordList";
+            Name = "InsuranceRecordList";
             Text = "Записи страхового стажа";
+            Load += InsuranceRecordList_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
