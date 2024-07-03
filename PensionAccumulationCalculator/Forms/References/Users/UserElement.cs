@@ -123,7 +123,7 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
 
                 _idTextBox.Text = user.User_id.ToString();
                 _loginTextBox.Text = user.Login;
-                _passwordTextBox.Text = user.Login;
+                _passwordTextBox.Text = user.Password;
                 _secondNameTextBox.Text = client.Second_name;
                 _firstNameTextBox.Text = client.First_name;
                 _lastNameTextBox.Text = client.Last_name;

@@ -23,9 +23,9 @@ namespace PensionAccumulationCalculator.Forms {
 
             if (user != null) {
                 Hide();
-                MilitaryRecordList recordList = new MilitaryRecordList(new MilitaryRecordService(new MilitaryRecordRepo()));
-                recordList.FormClosed += (sender, e) => this.Close();
-                recordList.Show(this);
+                MainMenu mainMenu = new MainMenu();
+                mainMenu.FormClosed += (sender, e) => this.Close();
+                mainMenu.Show(this);
             }
         }
     }
