@@ -1,4 +1,4 @@
-using PensionAccumulationCalculator.Forms.Users;
+using PensionAccumulationCalculator.Forms;
 using PensionAccumulationCalculator.Repos.Implementations;
 using PensionAccumulationCalculator.Services.Implementations;
 
@@ -7,8 +7,7 @@ namespace PensionAccumulationCalculator {
         [STAThread]
         static void Main() {
             ApplicationConfiguration.Initialize();
-
-            Application.Run(new UsersList(new UserService(new UserRepo())));
+            Application.Run(new Login(new UserService(new UserRepo())));
         }
     }
 }

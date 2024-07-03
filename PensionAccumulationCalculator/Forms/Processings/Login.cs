@@ -1,17 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using PensionAccumulationCalculator.Entities;
+using PensionAccumulationCalculator.Forms.MiliraryRecord;
+using PensionAccumulationCalculator.Forms.WorkRecord;
+using PensionAccumulationCalculator.Repos.Implementations;
+using PensionAccumulationCalculator.Services.Implementations;
+using PensionAccumulationCalculator.Services.Interfaces;
 
 namespace PensionAccumulationCalculator.Forms {
     public partial class Login : Form {
-        public Login() {
+        private readonly IUserService _userService;
+        public Login(IUserService userService) {
+            _userService = userService;
+
             InitializeComponent();
+        }
+
+        private async void LoginButton_Click(object sender, EventArgs e) {
+            User? user = new () { Login = _loginTextBox.Text, Password = _passwordTextBox.Text };
+
+            var users = (await _userService.GetAllAsync()).Data;
+
+            user = users.FirstOrDefault(u => u?.Login == user.Login && u.Password == user.Password, null);
+
+            if (user != null) {
+                Hide();
+                MilitaryRecordList recordList = new MilitaryRecordList(new MilitaryRecordService(new MilitaryRecordRepo()));
+                recordList.FormClosed += (sender, e) => this.Close();
+                recordList.Show(this);
+            }
         }
     }
 }

@@ -78,7 +78,7 @@ CREATE TABLE Error_logs (
 	Log_id INT PRIMARY KEY IDENTITY(1,1),
 	Error_datetime DATETIME,
 	Source_table_id INT,
-	Details NVARCHAR(200),
+	Details NVARCHAR(500),
 	FOREIGN KEY (Source_table_id) REFERENCES Ref_tables(table_id),
 );
 GO
@@ -96,6 +96,24 @@ VALUES
 	(7, 'Ref_coefficients_cost_by_year');
 
 SET IDENTITY_INSERT dbo.Ref_tables OFF;  
+
+SET IDENTITY_INSERT dbo.Ref_coefficients_cost_by_year ON;
+
+INSERT Ref_coefficients_cost_by_year(Year, Cost)
+VALUES 
+	(2015, 71.41),
+	(2016, 74.27),
+	(2017, 78.58),
+	(2018, 81.49),
+	(2019, 87.24),
+	(2020, 93.00),
+	(2021, 98.86),
+	(2022, 118.10),
+	(2023, 123.77),
+	(2024, 133.05);
+
+
+SET IDENTITY_INSERT dbo.Ref_coefficients_cost_by_year OFF;
 
 GO
 
@@ -123,7 +141,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 1, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Users', RESEED);
 		DBCC CHECKIDENT ('Clients', RESEED);
@@ -145,7 +163,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 1, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -159,7 +177,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 1, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -178,7 +196,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 1, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -199,7 +217,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 1, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Users', RESEED);
 		DBCC CHECKIDENT ('Clients', RESEED);
@@ -223,7 +241,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 2, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -237,7 +255,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 2, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -259,7 +277,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 2, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -279,7 +297,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 3, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Work_records', RESEED);
 	END CATCH
@@ -298,7 +316,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 3, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -312,7 +330,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 3, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -332,7 +350,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 3, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -348,7 +366,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 3, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Work_records', RESEED);
 	END CATCH
@@ -370,7 +388,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 4, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Insurance_records', RESEED);
 	END CATCH
@@ -389,7 +407,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 4, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -403,7 +421,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 4, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -423,7 +441,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 4, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -439,7 +457,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 4, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Work_records', RESEED);
 	END CATCH
@@ -461,7 +479,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 5, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Military_records', RESEED);
 	END CATCH
@@ -480,7 +498,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 5, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -494,7 +512,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 5, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -514,7 +532,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 5, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -530,7 +548,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 5, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Military_records', RESEED);
 	END CATCH
@@ -554,7 +572,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 6, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Individual_pencion_coefficient_accumulation', RESEED);
 	END CATCH
@@ -573,7 +591,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 6, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -587,7 +605,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 6, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -609,7 +627,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 6, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -625,7 +643,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 6, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Individual_pencion_coefficient_accumulation', RESEED);
 	END CATCH
@@ -647,7 +665,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 7, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Ref_coefficients_cost_by_year', RESEED);
 	END CATCH
@@ -667,7 +685,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 7, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -681,7 +699,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 7, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -699,7 +717,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 7, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -715,7 +733,7 @@ BEGIN
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 7, 'ERROR ' + ERROR_NUMBER() + ': ' + ERROR_MESSAGE());
+		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Ref_coefficients_cost_by_year', RESEED);
 	END CATCH

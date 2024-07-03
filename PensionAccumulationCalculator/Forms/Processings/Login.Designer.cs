@@ -23,90 +23,91 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            LogoLabel = new Label();
-            button1 = new Button();
-            LoginLabel = new Label();
-            label3 = new Label();
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
-            ForgotYourPasswordLinkLabel = new LinkLabel();
+            _logoLabel = new Label();
+            _loginButton = new Button();
+            _loginLabel = new Label();
+            _passwordLabel = new Label();
+            _loginTextBox = new TextBox();
+            _passwordTextBox = new TextBox();
+            _forgotYourPasswordLinkLabel = new LinkLabel();
             SuspendLayout();
             // 
-            // LogoLabel
+            // _logoLabel
             // 
-            LogoLabel.AutoSize = true;
-            LogoLabel.Font = new Font("Segoe UI", 12F);
-            LogoLabel.Location = new Point(12, 9);
-            LogoLabel.Name = "LogoLabel";
-            LogoLabel.Size = new Size(281, 21);
-            LogoLabel.TabIndex = 0;
-            LogoLabel.Text = "Калькулятор пенсионных накоплений";
+            _logoLabel.AutoSize = true;
+            _logoLabel.Font = new Font("Segoe UI", 12F);
+            _logoLabel.Location = new Point(12, 9);
+            _logoLabel.Name = "_logoLabel";
+            _logoLabel.Size = new Size(281, 21);
+            _logoLabel.TabIndex = 0;
+            _logoLabel.Text = "Калькулятор пенсионных накоплений";
             // 
-            // button1
+            // _loginButton
             // 
-            button1.Location = new Point(111, 169);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 1;
-            button1.Text = "Войти";
-            button1.UseVisualStyleBackColor = true;
+            _loginButton.Location = new Point(111, 169);
+            _loginButton.Name = "_loginButton";
+            _loginButton.Size = new Size(75, 23);
+            _loginButton.TabIndex = 1;
+            _loginButton.Text = "Войти";
+            _loginButton.UseVisualStyleBackColor = true;
+            _loginButton.Click += LoginButton_Click;
             // 
-            // LoginLabel
+            // _loginLabel
             // 
-            LoginLabel.AutoSize = true;
-            LoginLabel.Location = new Point(67, 45);
-            LoginLabel.Name = "LoginLabel";
-            LoginLabel.Size = new Size(41, 15);
-            LoginLabel.TabIndex = 2;
-            LoginLabel.Text = "Логин";
+            _loginLabel.AutoSize = true;
+            _loginLabel.Location = new Point(67, 45);
+            _loginLabel.Name = "_loginLabel";
+            _loginLabel.Size = new Size(41, 15);
+            _loginLabel.TabIndex = 2;
+            _loginLabel.Text = "Логин";
             // 
-            // label3
+            // _passwordLabel
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(67, 100);
-            label3.Name = "label3";
-            label3.Size = new Size(49, 15);
-            label3.TabIndex = 3;
-            label3.Text = "Пароль";
+            _passwordLabel.AutoSize = true;
+            _passwordLabel.Location = new Point(67, 100);
+            _passwordLabel.Name = "_passwordLabel";
+            _passwordLabel.Size = new Size(49, 15);
+            _passwordLabel.TabIndex = 3;
+            _passwordLabel.Text = "Пароль";
             // 
-            // textBox1
+            // _loginTextBox
             // 
-            textBox1.Location = new Point(67, 63);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(166, 23);
-            textBox1.TabIndex = 4;
+            _loginTextBox.Location = new Point(67, 63);
+            _loginTextBox.Name = "_loginTextBox";
+            _loginTextBox.Size = new Size(166, 23);
+            _loginTextBox.TabIndex = 4;
             // 
-            // textBox2
+            // _passwordTextBox
             // 
-            textBox2.Location = new Point(67, 118);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(166, 23);
-            textBox2.TabIndex = 5;
+            _passwordTextBox.Location = new Point(67, 118);
+            _passwordTextBox.Name = "_passwordTextBox";
+            _passwordTextBox.Size = new Size(166, 23);
+            _passwordTextBox.TabIndex = 5;
             // 
-            // ForgotYourPasswordLinkLabel
+            // _forgotYourPasswordLinkLabel
             // 
-            ForgotYourPasswordLinkLabel.AutoSize = true;
-            ForgotYourPasswordLinkLabel.Location = new Point(100, 207);
-            ForgotYourPasswordLinkLabel.Name = "ForgotYourPasswordLinkLabel";
-            ForgotYourPasswordLinkLabel.Size = new Size(98, 15);
-            ForgotYourPasswordLinkLabel.TabIndex = 6;
-            ForgotYourPasswordLinkLabel.TabStop = true;
-            ForgotYourPasswordLinkLabel.Text = "Забыли пароль?";
-            ForgotYourPasswordLinkLabel.Visible = false;
+            _forgotYourPasswordLinkLabel.AutoSize = true;
+            _forgotYourPasswordLinkLabel.Location = new Point(100, 207);
+            _forgotYourPasswordLinkLabel.Name = "_forgotYourPasswordLinkLabel";
+            _forgotYourPasswordLinkLabel.Size = new Size(98, 15);
+            _forgotYourPasswordLinkLabel.TabIndex = 6;
+            _forgotYourPasswordLinkLabel.TabStop = true;
+            _forgotYourPasswordLinkLabel.Text = "Забыли пароль?";
+            _forgotYourPasswordLinkLabel.Visible = false;
             // 
-            // Index
+            // Login
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(303, 241);
-            Controls.Add(ForgotYourPasswordLinkLabel);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
-            Controls.Add(label3);
-            Controls.Add(LoginLabel);
-            Controls.Add(button1);
-            Controls.Add(LogoLabel);
-            Name = "Index";
+            Controls.Add(_forgotYourPasswordLinkLabel);
+            Controls.Add(_passwordTextBox);
+            Controls.Add(_loginTextBox);
+            Controls.Add(_passwordLabel);
+            Controls.Add(_loginLabel);
+            Controls.Add(_loginButton);
+            Controls.Add(_logoLabel);
+            Name = "Login";
             Text = "Index";
             ResumeLayout(false);
             PerformLayout();
@@ -114,12 +115,12 @@
 
         #endregion
 
-        private Label LogoLabel;
-        private Button button1;
-        private Label LoginLabel;
-        private Label label3;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private LinkLabel ForgotYourPasswordLinkLabel;
+        private Label _logoLabel;
+        private Button _loginButton;
+        private Label _loginLabel;
+        private Label _passwordLabel;
+        private TextBox _loginTextBox;
+        private TextBox _passwordTextBox;
+        private LinkLabel _forgotYourPasswordLinkLabel;
     }
 }

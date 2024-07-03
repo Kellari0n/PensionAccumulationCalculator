@@ -26,7 +26,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
         public async Task DeleteAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
                 await connection.OpenAsync();
-                using (var cmd = new SqlCommand("dbo.DeleteWorkRecord", connection)) {
+                using (var cmd = new SqlCommand("dbo.DeleteMilitaryRecord", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -38,7 +38,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
         public async Task<ICollection<Military_record>> GetAllAsync() {
             using (var connection = new SqlConnection(_connectionString)) {
                 await connection.OpenAsync();
-                using (var cmd = new SqlCommand("dbo.GetAllWorkRecords", connection)) {
+                using (var cmd = new SqlCommand("dbo.GetAllMilitaryRecords", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     using (var reader = await cmd.ExecuteReaderAsync()) {
@@ -48,7 +48,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                             entities.Add(new Military_record {
                                 Military_exp_id = reader.GetInt32(0),
                                 User_id = reader.GetInt32(1),
-                                Individual_pension_coefficient = reader.GetFloat(2),
+                                Individual_pension_coefficient = reader.GetDecimal(2),
                                 Year = reader.GetInt32(3),
                             });
                         }
@@ -71,7 +71,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                         return new Military_record {
                             Military_exp_id = reader.GetInt32(0),
                             User_id = reader.GetInt32(1),
-                            Individual_pension_coefficient = reader.GetFloat(2),
+                            Individual_pension_coefficient = reader.GetDecimal(2),
                             Year = reader.GetInt32(3),
                         };
                     }

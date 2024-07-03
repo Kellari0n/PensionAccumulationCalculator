@@ -12,13 +12,13 @@ namespace PensionAccumulationCalculator.Forms.Users {
         }
 
         private async void UsersList_Load(object? sender, EventArgs e) {
-            await UpdateList();
+            await UpdateListAsync();
         }
 
         private void Add_Click(object sender, EventArgs e) {
             var userForm = new UserElement(_userService, CRUDAction.Create);
             userForm.FormClosed += async (sender, e) => {
-                await UpdateList();
+                await UpdateListAsync();
                 this.Visible = true;
             };
             this.Visible = false;
@@ -32,7 +32,7 @@ namespace PensionAccumulationCalculator.Forms.Users {
 
             var userForm = new UserElement(_userService, CRUDAction.Update, selectedId);
             userForm.FormClosed += async (sender, e) => {
-                await UpdateList();
+                await UpdateListAsync();
                 this.Visible = true;
             };
             this.Visible = false;
@@ -46,7 +46,7 @@ namespace PensionAccumulationCalculator.Forms.Users {
             else if (selectedIds.Count == 1) {
                 var userForm = new UserElement(_userService, CRUDAction.Delete, selectedIds.First());
                 userForm.FormClosed += async (sender, e) => {
-                    await UpdateList();
+                    await UpdateListAsync();
                     this.Visible = true;
                 };
                 this.Visible = false;
@@ -58,7 +58,7 @@ namespace PensionAccumulationCalculator.Forms.Users {
                         //MessageBox.Show();
                     }
                 }
-                await UpdateList();
+                await UpdateListAsync();
             }
         }
 
@@ -66,7 +66,7 @@ namespace PensionAccumulationCalculator.Forms.Users {
             Close();
         }
 
-        private async Task UpdateList() {
+        private async Task UpdateListAsync() {
             var usersResponse = await _userService.GetAllAsync();
             var clientsResponse = await _userService.GetClientsAsync();
 
@@ -85,20 +85,20 @@ namespace PensionAccumulationCalculator.Forms.Users {
             })
             .ToList();
 
-            dataGridView.DataSource = data;
+            _dataGridView.DataSource = data;
         }
 
         private List<int> GetSelectedIds() {
             List<int> selectedRows = new();
-            for (int i = 0; i < dataGridView.SelectedCells.Count; i++) {
-                if (!selectedRows.Contains(dataGridView.SelectedCells[i].RowIndex)) {
-                    selectedRows.Add(dataGridView.SelectedCells[i].RowIndex);
+            for (int i = 0; i < _dataGridView.SelectedCells.Count; i++) {
+                if (!selectedRows.Contains(_dataGridView.SelectedCells[i].RowIndex)) {
+                    selectedRows.Add(_dataGridView.SelectedCells[i].RowIndex);
                 }
             }
 
             List<int> selectedIds = new();
             foreach (int i in selectedRows) {
-                selectedIds.Add((int)dataGridView.Rows[i].Cells[0].Value);
+                selectedIds.Add((int)_dataGridView.Rows[i].Cells[0].Value);
             }
 
             return selectedIds;

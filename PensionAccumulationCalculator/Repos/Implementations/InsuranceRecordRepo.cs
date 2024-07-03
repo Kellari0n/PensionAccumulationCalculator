@@ -48,7 +48,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                             entities.Add(new Insurance_record {
                                 Insurance_exp_id = reader.GetInt32(0),
                                 User_id = reader.GetInt32(1),
-                                Individual_pension_coefficient = reader.GetFloat(2),
+                                Individual_pension_coefficient = reader.GetDecimal(2),
                                 Year = reader.GetInt32(3),
                             });
                         }
@@ -71,7 +71,7 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                         return new Insurance_record {
                             Insurance_exp_id = reader.GetInt32(0),
                             User_id = reader.GetInt32(1),
-                            Individual_pension_coefficient = reader.GetFloat(2),
+                            Individual_pension_coefficient = reader.GetDecimal(2),
                             Year = reader.GetInt32(3),
                         };
                     }
