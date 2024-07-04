@@ -3,6 +3,8 @@ using PensionAccumulationCalculator.Repos.Interfaces;
 using PensionAccumulationCalculator.Services.Interfaces;
 using PensionAccumulationCalculator.Services.Responses;
 
+using System.Net;
+
 namespace PensionAccumulationCalculator.Services.Implementations {
     internal class UserService : IUserService {
         private readonly IUserRepo _userRepo;
@@ -12,59 +14,288 @@ namespace PensionAccumulationCalculator.Services.Implementations {
         }
         
         public async Task<BaseResponse<ICollection<User>>> GetAllAsync() {
-            return new BaseResponse<ICollection<User>> { Data = await _userRepo.GetAllAsync(), StatusCode = Enums.StatusCode.OK };
+            ICollection<User> data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                data = await _userRepo.GetAllAsync();
+                if (data.Count == 0) { 
+                    statusCode = HttpStatusCode.NoContent;
+                    description = "Zero entities found";
+                }
+                else {
+                    statusCode = HttpStatusCode.OK;
+                    description = "Successfully";
+                }
+            }
+            catch (TimeoutException) {
+                data = [];
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) { 
+                data = [];
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<ICollection<User>> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<User>> GetByIdAsync(int id) {
-            return new BaseResponse<User> { Data = await _userRepo.GetByIdAsync(id), StatusCode = Enums.StatusCode.OK };
+            User data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                data = await _userRepo.GetByIdAsync(id);
+                if (data is null) {
+                    statusCode = HttpStatusCode.NoContent;
+                    description = "Zero entities found";
+                }
+                else {
+                    statusCode = HttpStatusCode.OK;
+                    description = "Successfully";
+                }
+            }
+            catch (TimeoutException) {
+                data = null!;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = null!;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<User> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<Client>> GetClientByIdAsync(int id) {
-            return new BaseResponse<Client> { Data = await _userRepo.GetClientByIdAsync(id), StatusCode= Enums.StatusCode.OK };
+            Client data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                data = await _userRepo.GetClientByIdAsync(id);
+                if (data is null) {
+                    statusCode = HttpStatusCode.NoContent;
+                    description = "Zero entities found";
+                }
+                else {
+                    statusCode = HttpStatusCode.OK;
+                    description = "Successfully";
+                }
+            }
+            catch (TimeoutException) {
+                data = null!;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = null!;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<Client> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<ICollection<Client>>> GetClientsAsync() {
-            return new BaseResponse<ICollection<Client>> { Data = await _userRepo.GetClientsAsync(), StatusCode = Enums.StatusCode.OK };
+            ICollection<Client> data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                data = await _userRepo.GetClientsAsync();
+                if (data.Count == 0) {
+                    statusCode = HttpStatusCode.NoContent;
+                    description = "Zero entities found";
+                }
+                else {
+                    statusCode = HttpStatusCode.OK;
+                    description = "Successfully";
+                }
+            }
+            catch (TimeoutException) {
+                data = [];
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = [];
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<ICollection<Client>> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryCreateAsync(User user, Client client) {
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            await _userRepo.CreateAsync(user, client);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _userRepo.TryCreateAsync(user, client);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully created";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't created";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryCreateAsync(User entity) {
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            await _userRepo.CreateAsync(entity);
-            return new BaseResponse<bool> { Data = true, StatusCode= Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _userRepo.TryCreateAsync(entity);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully created";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't created";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryDeleteAsync(int id) {
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            await _userRepo.DeleteAsync(id);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _userRepo.TryDeleteAsync(id);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully deleted";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't deleted";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryUpdateAsync(User user) {
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            await _userRepo.UpdateAsync(user);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _userRepo.TryUpdateAsync(user);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully updated";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't updated";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryUpdateClientAsync(Client client) {
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            // Добавить проверку ожидания!!!!!!!!
-            await _userRepo.UpdateClientAsync(client);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _userRepo.TryUpdateClientAsync(client);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully updated";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't updated";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
     }
 }

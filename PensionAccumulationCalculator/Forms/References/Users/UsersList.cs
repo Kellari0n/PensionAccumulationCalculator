@@ -67,25 +67,14 @@ namespace PensionAccumulationCalculator.Forms.Users {
         }
 
         private async Task UpdateListAsync() {
-            var usersResponse = await _userService.GetAllAsync();
-            var clientsResponse = await _userService.GetClientsAsync();
+            var response = await _userService.GetAllAsync();
 
-            var users = usersResponse.Data;
-            var clients = clientsResponse.Data;
+            if (response.StatusCode != System.Net.HttpStatusCode.OK) {
+                //MessageBox.Show();
+                return;
+            }
 
-            var data = users.Join(clients, u => u.User_id, c => c.User_id, (u, c) => new {
-                u.User_id,
-                u.Login,
-                u.Password,
-                c.Second_name,
-                c.First_name,
-                c.Last_name,
-                c.Phone_number,
-                c.Email
-            })
-            .ToList();
-
-            _dataGridView.DataSource = data;
+            _dataGridView.DataSource = response.Data;
         }
 
         private List<int> GetSelectedIds() {

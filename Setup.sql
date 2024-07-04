@@ -25,7 +25,7 @@ CREATE TABLE Clients (
 
 CREATE TABLE Users (
 	User_id INT PRIMARY KEY IDENTITY(1,1),
-	Login NVARCHAR(50),
+	Login NVARCHAR(50) UNIQUE,
 	Password NVARCHAR(32),
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id)
 );
@@ -137,6 +137,8 @@ BEGIN
 
 			INSERT Users(Login, Password)
 			VALUES (@login, @password);
+
+			SELECT CAST(1 AS BIT);
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
@@ -145,6 +147,8 @@ BEGIN
 
 		DBCC CHECKIDENT ('Users', RESEED);
 		DBCC CHECKIDENT ('Clients', RESEED);
+
+		SELECT CAST(0 AS BIT);
 
 		ROLLBACK TRANSACTION;
 	END CATCH
@@ -193,10 +197,14 @@ BEGIN
 		UPDATE Users
 		SET Login = @login, Password = @password
 		WHERE User_id = @id;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -213,6 +221,8 @@ BEGIN
 
 			DELETE FROM Clients
 			WHERE User_id = @id;
+
+			SELECT CAST(1 AS BIT);
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
@@ -221,6 +231,8 @@ BEGIN
 
 		DBCC CHECKIDENT ('Users', RESEED);
 		DBCC CHECKIDENT ('Clients', RESEED);
+
+		SELECT CAST(0 AS BIT);
 
 		ROLLBACK TRANSACTION;
 	END CATCH
@@ -274,10 +286,14 @@ BEGIN
 		UPDATE Clients
 		SET Second_name = @second_name, First_name = @first_name, Last_name = @last_name, Phone_number = @phone_number, Email = @email
 		WHERE User_id = @id;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -294,12 +310,16 @@ BEGIN
 	BEGIN TRY
 		INSERT Work_records(User_id, Individual_pension_coefficient, Year)
 		VALUES (@user_id, @individual_pension_coefficient, @year);
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Work_records', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO 
@@ -347,10 +367,14 @@ BEGIN
 		UPDATE Work_records
 		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
 		WHERE Work_exp_id = @id;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -363,12 +387,16 @@ BEGIN
 	BEGIN TRY
 			DELETE FROM Work_records
 			WHERE Work_exp_id = @id;
+
+			SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Work_records', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -385,15 +413,19 @@ BEGIN
 	BEGIN TRY
 		INSERT Insurance_records(User_id, Individual_pension_coefficient, Year)
 		VALUES (@user_id, @individual_pension_coefficient, @year);
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Insurance_records', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
-GO 
+GO
 
 CREATE PROCEDURE dbo.GetInsuranceRecordById
 	@id INT
@@ -438,10 +470,14 @@ BEGIN
 		UPDATE Insurance_records
 		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
 		WHERE Insurance_exp_id = @id;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -454,12 +490,16 @@ BEGIN
 	BEGIN TRY
 			DELETE FROM Insurance_records
 			WHERE Insurance_exp_id = @id;
+
+			SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Work_records', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -476,12 +516,16 @@ BEGIN
 	BEGIN TRY
 		INSERT Military_records(User_id, Individual_pension_coefficient, Year)
 		VALUES (@user_id, @individual_pension_coefficient, @year);
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Military_records', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO 
@@ -529,10 +573,14 @@ BEGIN
 		UPDATE Military_records
 		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
 		WHERE Military_exp_id = @id;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -545,12 +593,16 @@ BEGIN
 	BEGIN TRY
 			DELETE FROM Military_records
 			WHERE Military_exp_id = @id;
+
+			SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Military_records', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -569,12 +621,16 @@ BEGIN
 	BEGIN TRY
 		INSERT Individual_pencion_coefficient_accumulation(User_id, Individual_pension_coefficient, Year, Record_id, Table_id)
 		VALUES (@user_id, @individual_pension_coefficient, @year, @record_id, @table_id);
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Individual_pencion_coefficient_accumulation', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO 
@@ -624,10 +680,14 @@ BEGIN
 		UPDATE Individual_pencion_coefficient_accumulation
 		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year, Record_id = @record_id, Table_id = @table_id
 		WHERE Accumulation_exp_id = @id;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -640,12 +700,16 @@ BEGIN
 	BEGIN TRY
 			DELETE FROM Individual_pencion_coefficient_accumulation
 			WHERE Accumulation_exp_id = @id;
+
+			SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Individual_pencion_coefficient_accumulation', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -662,12 +726,16 @@ BEGIN
 	BEGIN TRY
 		INSERT Ref_coefficients_cost_by_year(Year, Cost)
 		VALUES (@year, @cost);
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Ref_coefficients_cost_by_year', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 	SET IDENTITY_INSERT dbo.Ref_coefficients_cost_by_year OFF;
 END
@@ -714,10 +782,14 @@ BEGIN
 		UPDATE Ref_coefficients_cost_by_year
 		SET Cost = @cost 
 		WHERE Year = @year;
+
+		SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
@@ -730,12 +802,18 @@ BEGIN
 	BEGIN TRY
 			DELETE FROM Ref_coefficients_cost_by_year
 			WHERE Year = @year;
+
+			SELECT CAST(1 AS BIT);
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 7, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		DBCC CHECKIDENT ('Ref_coefficients_cost_by_year', RESEED);
+
+		SELECT CAST(0 AS BIT);
 	END CATCH
 END
 GO
+
+EXEC CreateUser @login = 'admin', @password = 'admin';

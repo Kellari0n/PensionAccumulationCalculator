@@ -9,22 +9,42 @@ using System.Data;
 namespace PensionAccumulationCalculator.Repos.Implementations {
     internal class UserRepo : IUserRepo {
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
-        public async Task CreateAsync(User user) {
+        public async Task<bool> TryCreateAsync(User user) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.CreateUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@login", user.Login));
                     cmd.Parameters.Add(new SqlParameter("@password", user.Password));
-                    
-                    await cmd.ExecuteReaderAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        return reader.GetBoolean(0);
+                    }
                 }
             }
         }
 
-        public async Task CreateAsync(User user, Client client) {
+        public async Task<bool> TryCreateAsync(User user, Client client) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.CreateUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@login", user.Login));
@@ -35,26 +55,50 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                     cmd.Parameters.Add(new SqlParameter("@phone_number", client.Phone_number));
                     cmd.Parameters.Add(new SqlParameter("@email", client.Email));
 
-                    await cmd.ExecuteReaderAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        return reader.GetBoolean(0);
+                    }
                 }
             }
         }
 
-        public async Task DeleteAsync(int id) {
+        public async Task<bool> TryDeleteAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.DeleteUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@id", id)); 
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    await cmd.ExecuteReaderAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        return reader.GetBoolean(0);
+                    }
                 }
             }
         }
 
         public async Task<ICollection<User>> GetAllAsync() {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.GetAllUsers", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -76,7 +120,15 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
 
         public async Task<ICollection<Client>> GetClientsAsync() {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.GetAllClients", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
 
@@ -101,7 +153,15 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
 
         public async Task<User> GetByIdAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.GetUserById", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", id));
@@ -120,7 +180,15 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
 
         public async Task<Client> GetClientByIdAsync(int id) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.GetClientById", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", id));
@@ -141,23 +209,43 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
             }
         }
 
-        public async Task UpdateAsync(User user) {
+        public async Task<bool> TryUpdateAsync(User user) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.UpdateUser", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", user.User_id));
                     cmd.Parameters.Add(new SqlParameter("@login", user.Login));
                     cmd.Parameters.Add(new SqlParameter("@password", user.Password));
 
-                    await cmd.ExecuteReaderAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        return reader.GetBoolean(0);
+                    }
                 }
             }
         }
 
-        public async Task UpdateClientAsync(Client client) {
+        public async Task<bool> TryUpdateClientAsync(Client client) {
             using (var connection = new SqlConnection(_connectionString)) {
-                await connection.OpenAsync();
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
                 using (var cmd = new SqlCommand("dbo.UpdateClient", connection)) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@id", client.User_id));
@@ -167,7 +255,11 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                     cmd.Parameters.Add(new SqlParameter("@phone_number", client.Phone_number));
                     cmd.Parameters.Add(new SqlParameter("@email", client.Email));
 
-                    await cmd.ExecuteReaderAsync();
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        return reader.GetBoolean(0);
+                    }
                 }
             }
         }

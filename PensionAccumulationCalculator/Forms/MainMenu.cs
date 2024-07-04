@@ -17,40 +17,38 @@ using System.Windows.Forms;
 
 namespace PensionAccumulationCalculator.Forms
 {
-    public partial class MainMenu : Form
-    {
-        public MainMenu()
-        {
+    public partial class MainMenu : Form {
+        public MainMenu() {
             InitializeComponent();
         }
 
-        private void client_button_Click(object sender, EventArgs e)
-        {
-            UsersList form = new UsersList(new UserService(new UserRepo()));
+        private void client_button_Click(object sender, EventArgs e) {
+            ClientList form = new ClientList(new UserService(new UserRepo()));
             form.Show(this);
         }
 
-        private void insurance_record_button_Click(object sender, EventArgs e)
-        {
+        private void insurance_record_button_Click(object sender, EventArgs e) {
             InsuranceRecordList form = new InsuranceRecordList(new InsuranceRecordService(new InsuranceRecordRepo()));
             form.Show(this);
         }
 
-        private void military_record_button_Click(object sender, EventArgs e)
-        {
+        private void military_record_button_Click(object sender, EventArgs e) {
             MilitaryRecordList form = new MilitaryRecordList(new MilitaryRecordService(new MilitaryRecordRepo()));
             form.Show(this);
         }
 
-        private void work_record_button_Click(object sender, EventArgs e)
-        {
+        private void work_record_button_Click(object sender, EventArgs e) {
             WorkRecordList form = new WorkRecordList(new WorkRecordService(new WorkRecordRepo()));
             form.Show(this);
         }
 
-        private void ipc_accum_button_Click(object sender, EventArgs e)
-        {
+        private void ipc_accum_button_Click(object sender, EventArgs e) {
             IndividualPensionCoefficientAccumulationList form = new IndividualPensionCoefficientAccumulationList();
+            form.Show(this);
+        }
+
+        private void user_button_Click(object sender, EventArgs e) {
+            UsersList form = new UsersList(new UserService(new UserRepo()));
             form.Show(this);
         }
     }

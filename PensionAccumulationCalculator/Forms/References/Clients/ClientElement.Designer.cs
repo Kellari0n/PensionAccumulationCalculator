@@ -1,20 +1,16 @@
-﻿namespace PensionAccumulationCalculator.Forms
-{
-    partial class ClientElement
-    {
+﻿namespace PensionAccumulationCalculator.Forms.References.Users {
+    partial class ClientElement {
         /// <summary>
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-         
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -26,149 +22,186 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
-            label1 = new Label();
-            label3 = new Label();
-            label2 = new Label();
-            Save = new Button();
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
-            textBox3 = new TextBox();
-            label4 = new Label();
-            textBox4 = new TextBox();
-            label5 = new Label();
-            textBox5 = new TextBox();
+        private void InitializeComponent() {
+            _secondNameLabel = new Label();
+            _lastNameLabel = new Label();
+            _firstNameLabel = new Label();
+            _actionButton = new Button();
+            _secondNameTextBox = new TextBox();
+            _firstNameTextBox = new TextBox();
+            _lastNameTextBox = new TextBox();
+            _phoneLabel = new Label();
+            _phoneTextBox = new TextBox();
+            _emailLabel = new Label();
+            _emailTextBox = new TextBox();
+            _headerLabel = new Label();
+            _idTextBox = new TextBox();
+            _idLabel = new Label();
             SuspendLayout();
             // 
-            // label1
+            // _secondNameLabel
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(22, 69);
-            label1.Name = "label1";
-            label1.Size = new Size(75, 21);
-            label1.TabIndex = 0;
-            label1.Text = "Фамилия";
+            _secondNameLabel.AutoSize = true;
+            _secondNameLabel.Font = new Font("Segoe UI", 12F);
+            _secondNameLabel.Location = new Point(20, 91);
+            _secondNameLabel.Name = "_secondNameLabel";
+            _secondNameLabel.Size = new Size(75, 21);
+            _secondNameLabel.TabIndex = 0;
+            _secondNameLabel.Text = "Фамилия";
             // 
-            // label3
+            // _lastNameLabel
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(20, 142);
-            label3.Name = "label3";
-            label3.Size = new Size(77, 21);
-            label3.TabIndex = 2;
-            label3.Text = "Отчество";
+            _lastNameLabel.AutoSize = true;
+            _lastNameLabel.Font = new Font("Segoe UI", 12F);
+            _lastNameLabel.Location = new Point(18, 164);
+            _lastNameLabel.Name = "_lastNameLabel";
+            _lastNameLabel.Size = new Size(77, 21);
+            _lastNameLabel.TabIndex = 2;
+            _lastNameLabel.Text = "Отчество";
             // 
-            // label2
+            // _firstNameLabel
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 12F);
-            label2.Location = new Point(56, 107);
-            label2.Name = "label2";
-            label2.Size = new Size(41, 21);
-            label2.TabIndex = 3;
-            label2.Text = "Имя";
+            _firstNameLabel.AutoSize = true;
+            _firstNameLabel.Font = new Font("Segoe UI", 12F);
+            _firstNameLabel.Location = new Point(54, 129);
+            _firstNameLabel.Name = "_firstNameLabel";
+            _firstNameLabel.Size = new Size(41, 21);
+            _firstNameLabel.TabIndex = 3;
+            _firstNameLabel.Text = "Имя";
             // 
-            // Save
+            // _actionButton
             // 
-            Save.Location = new Point(22, 12);
-            Save.Name = "Save";
-            Save.Size = new Size(124, 36);
-            Save.TabIndex = 4;
-            Save.Text = "Сохранить";
-            Save.UseVisualStyleBackColor = true;
+            _actionButton.Location = new Point(115, 305);
+            _actionButton.Name = "_actionButton";
+            _actionButton.Size = new Size(124, 27);
+            _actionButton.TabIndex = 4;
+            _actionButton.Text = "Сохранить";
+            _actionButton.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // _secondNameTextBox
             // 
-            textBox1.Location = new Point(103, 67);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(198, 23);
-            textBox1.TabIndex = 5;
+            _secondNameTextBox.Location = new Point(101, 89);
+            _secondNameTextBox.Name = "_secondNameTextBox";
+            _secondNameTextBox.Size = new Size(198, 23);
+            _secondNameTextBox.TabIndex = 5;
             // 
-            // textBox2
+            // _firstNameTextBox
             // 
-            textBox2.Location = new Point(103, 105);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(198, 23);
-            textBox2.TabIndex = 6;
+            _firstNameTextBox.Location = new Point(101, 127);
+            _firstNameTextBox.Name = "_firstNameTextBox";
+            _firstNameTextBox.Size = new Size(198, 23);
+            _firstNameTextBox.TabIndex = 6;
             // 
-            // textBox3
+            // _lastNameTextBox
             // 
-            textBox3.Location = new Point(103, 142);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(198, 23);
-            textBox3.TabIndex = 7;
+            _lastNameTextBox.Location = new Point(101, 164);
+            _lastNameTextBox.Name = "_lastNameTextBox";
+            _lastNameTextBox.Size = new Size(198, 23);
+            _lastNameTextBox.TabIndex = 7;
             // 
-            // label4
+            // _phoneLabel
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(26, 207);
-            label4.Name = "label4";
-            label4.Size = new Size(71, 21);
-            label4.TabIndex = 8;
-            label4.Text = "Телефон";
+            _phoneLabel.AutoSize = true;
+            _phoneLabel.Font = new Font("Segoe UI", 12F);
+            _phoneLabel.Location = new Point(24, 215);
+            _phoneLabel.Name = "_phoneLabel";
+            _phoneLabel.Size = new Size(71, 21);
+            _phoneLabel.TabIndex = 8;
+            _phoneLabel.Text = "Телефон";
             // 
-            // textBox4
+            // _phoneTextBox
             // 
-            textBox4.Location = new Point(103, 205);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(165, 23);
-            textBox4.TabIndex = 9;
+            _phoneTextBox.Location = new Point(101, 213);
+            _phoneTextBox.Name = "_phoneTextBox";
+            _phoneTextBox.Size = new Size(198, 23);
+            _phoneTextBox.TabIndex = 9;
             // 
-            // label5
+            // _emailLabel
             // 
-            label5.AutoSize = true;
-            label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(49, 243);
-            label5.Name = "label5";
-            label5.Size = new Size(48, 21);
-            label5.TabIndex = 10;
-            label5.Text = "Email";
+            _emailLabel.AutoSize = true;
+            _emailLabel.Font = new Font("Segoe UI", 12F);
+            _emailLabel.Location = new Point(47, 251);
+            _emailLabel.Name = "_emailLabel";
+            _emailLabel.Size = new Size(48, 21);
+            _emailLabel.TabIndex = 10;
+            _emailLabel.Text = "Email";
             // 
-            // textBox5
+            // _emailTextBox
             // 
-            textBox5.Location = new Point(103, 241);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(165, 23);
-            textBox5.TabIndex = 11;
+            _emailTextBox.Location = new Point(101, 249);
+            _emailTextBox.Name = "_emailTextBox";
+            _emailTextBox.Size = new Size(198, 23);
+            _emailTextBox.TabIndex = 11;
+            // 
+            // _headerLabel
+            // 
+            _headerLabel.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            _headerLabel.Location = new Point(12, 9);
+            _headerLabel.Name = "_headerLabel";
+            _headerLabel.Size = new Size(326, 28);
+            _headerLabel.TabIndex = 12;
+            _headerLabel.Text = "Header";
+            _headerLabel.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // _idTextBox
+            // 
+            _idTextBox.Enabled = false;
+            _idTextBox.Location = new Point(101, 40);
+            _idTextBox.Name = "_idTextBox";
+            _idTextBox.Size = new Size(198, 23);
+            _idTextBox.TabIndex = 16;
+            // 
+            // _idLabel
+            // 
+            _idLabel.Font = new Font("Segoe UI", 12F);
+            _idLabel.Location = new Point(20, 42);
+            _idLabel.Name = "_idLabel";
+            _idLabel.Size = new Size(75, 21);
+            _idLabel.TabIndex = 13;
+            _idLabel.Text = "ID";
+            _idLabel.TextAlign = ContentAlignment.TopRight;
             // 
             // ClientElement
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(350, 295);
-            Controls.Add(textBox5);
-            Controls.Add(label5);
-            Controls.Add(textBox4);
-            Controls.Add(label4);
-            Controls.Add(textBox3);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
-            Controls.Add(Save);
-            Controls.Add(label2);
-            Controls.Add(label3);
-            Controls.Add(label1);
+            ClientSize = new Size(350, 344);
+            Controls.Add(_idTextBox);
+            Controls.Add(_idLabel);
+            Controls.Add(_headerLabel);
+            Controls.Add(_emailTextBox);
+            Controls.Add(_emailLabel);
+            Controls.Add(_phoneTextBox);
+            Controls.Add(_phoneLabel);
+            Controls.Add(_lastNameTextBox);
+            Controls.Add(_firstNameTextBox);
+            Controls.Add(_secondNameTextBox);
+            Controls.Add(_actionButton);
+            Controls.Add(_firstNameLabel);
+            Controls.Add(_lastNameLabel);
+            Controls.Add(_secondNameLabel);
             Name = "ClientElement";
-            Text = " ";
+            Text = "Пользователь";
+            Load += UserElement_Load;
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Label label1;
-        private Label label3;
-        private Label label2;
-        private Button Save;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private TextBox textBox3;
-        private Label label4;
-        private TextBox textBox4;
-        private Label label5;
-        private TextBox textBox5;
+        private Label _secondNameLabel;
+        private Label _lastNameLabel;
+        private Label _firstNameLabel;
+        private Button _actionButton;
+        private TextBox _secondNameTextBox;
+        private TextBox _firstNameTextBox;
+        private TextBox _lastNameTextBox;
+        private Label _phoneLabel;
+        private TextBox _phoneTextBox;
+        private Label _emailLabel;
+        private TextBox _emailTextBox;
+        private Label _headerLabel;
+        private TextBox _idTextBox;
+        private Label _idLabel;
     }
 }

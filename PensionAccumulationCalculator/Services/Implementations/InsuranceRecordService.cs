@@ -3,35 +3,174 @@ using PensionAccumulationCalculator.Repos.Interfaces;
 using PensionAccumulationCalculator.Services.Interfaces;
 using PensionAccumulationCalculator.Services.Responses;
 
+using System.Net;
+
 namespace PensionAccumulationCalculator.Services.Implementations {
     internal class InsuranceRecordService : IInsuranceRecordService {
-        private readonly IInsuranceRecordRepo _insuranceRecordRepo;
+        private readonly IInsuranceRecordRepo _recordRepo;
 
         public InsuranceRecordService(IInsuranceRecordRepo insuranceRecordRepo) {
-            _insuranceRecordRepo = insuranceRecordRepo;
+            _recordRepo = insuranceRecordRepo;
         }
 
         public async Task<BaseResponse<ICollection<Insurance_record>>> GetAllAsync() {
-            return new BaseResponse<ICollection<Insurance_record>>() { Data = await _insuranceRecordRepo.GetAllAsync(), StatusCode = Enums.StatusCode.OK };
+            ICollection<Insurance_record> data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                data = await _recordRepo.GetAllAsync();
+                if (data.Count == 0) {
+                    statusCode = HttpStatusCode.NoContent;
+                    description = "Zero entities found";
+                }
+                else {
+                    statusCode = HttpStatusCode.OK;
+                    description = "Successfully";
+                }
+            }
+            catch (TimeoutException) {
+                data = [];
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = [];
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<ICollection<Insurance_record>> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<Insurance_record>> GetByIdAsync(int id) {
-            return new BaseResponse<Insurance_record> { Data = await _insuranceRecordRepo.GetByIdAsync(id), StatusCode = Enums.StatusCode.OK };
+            Insurance_record data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                data = await _recordRepo.GetByIdAsync(id);
+                if (data is null) {
+                    statusCode = HttpStatusCode.NoContent;
+                    description = "Zero entities found";
+                }
+                else {
+                    statusCode = HttpStatusCode.OK;
+                    description = "Successfully";
+                }
+            }
+            catch (TimeoutException) {
+                data = null!;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = null!;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<Insurance_record> { Data = data, StatusCode = statusCode, Description = description };
         }
 
+
         public async Task<BaseResponse<bool>> TryCreateAsync(Insurance_record entity) {
-            await _insuranceRecordRepo.CreateAsync(entity);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _recordRepo.TryCreateAsync(entity);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully created";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't created";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryDeleteAsync(int id) {
-            await _insuranceRecordRepo.DeleteAsync(id);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _recordRepo.TryDeleteAsync(id);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully deleted";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't deleted";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
         public async Task<BaseResponse<bool>> TryUpdateAsync(Insurance_record entity) {
-            await _insuranceRecordRepo.UpdateAsync(entity);
-            return new BaseResponse<bool> { Data = true, StatusCode = Enums.StatusCode.OK };
+            bool data;
+            HttpStatusCode statusCode;
+            string description;
+
+            try {
+                var res = await _recordRepo.TryUpdateAsync(entity);
+
+                if (res) {
+                    data = true;
+                    statusCode = HttpStatusCode.OK;
+                    description = "Entity successfully updated";
+                }
+                else {
+                    data = false;
+                    statusCode = HttpStatusCode.InternalServerError;
+                    description = "Entity wasn't updated";
+                }
+            }
+            catch (TimeoutException) {
+                data = false;
+                statusCode = HttpStatusCode.GatewayTimeout;
+                description = "Время ожидания истекло.";
+            }
+            catch (Exception) {
+                data = false;
+                statusCode = HttpStatusCode.InternalServerError;
+                description = "Что-то пошло не так.";
+            }
+
+            return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
     }
 }

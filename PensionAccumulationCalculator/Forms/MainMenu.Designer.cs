@@ -26,18 +26,18 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             client_button = new Button();
             insurance_record_button = new Button();
             military_record_button = new Button();
             work_record_button = new Button();
             ipc_accum_button = new Button();
+            user_button = new Button();
             SuspendLayout();
             // 
             // client_button
             // 
-            client_button.Location = new Point(10, 10);
+            client_button.Location = new Point(12, 75);
             client_button.Name = "client_button";
             client_button.Size = new Size(140, 40);
             client_button.TabIndex = 0;
@@ -47,7 +47,7 @@
             // 
             // insurance_record_button
             // 
-            insurance_record_button.Location = new Point(10, 65);
+            insurance_record_button.Location = new Point(12, 130);
             insurance_record_button.Name = "insurance_record_button";
             insurance_record_button.Size = new Size(140, 40);
             insurance_record_button.TabIndex = 1;
@@ -57,7 +57,7 @@
             // 
             // military_record_button
             // 
-            military_record_button.Location = new Point(10, 120);
+            military_record_button.Location = new Point(12, 185);
             military_record_button.Name = "military_record_button";
             military_record_button.Size = new Size(140, 40);
             military_record_button.TabIndex = 2;
@@ -67,7 +67,7 @@
             // 
             // work_record_button
             // 
-            work_record_button.Location = new Point(10, 175);
+            work_record_button.Location = new Point(12, 240);
             work_record_button.Name = "work_record_button";
             work_record_button.Size = new Size(140, 40);
             work_record_button.TabIndex = 3;
@@ -77,7 +77,7 @@
             // 
             // ipc_accum_button
             // 
-            ipc_accum_button.Location = new Point(10, 230);
+            ipc_accum_button.Location = new Point(12, 295);
             ipc_accum_button.Name = "ipc_accum_button";
             ipc_accum_button.Size = new Size(140, 40);
             ipc_accum_button.TabIndex = 4;
@@ -85,11 +85,22 @@
             ipc_accum_button.UseVisualStyleBackColor = true;
             ipc_accum_button.Click += ipc_accum_button_Click;
             // 
+            // user_button
+            // 
+            user_button.Location = new Point(12, 20);
+            user_button.Name = "user_button";
+            user_button.Size = new Size(140, 40);
+            user_button.TabIndex = 5;
+            user_button.Text = "Пользователи";
+            user_button.UseVisualStyleBackColor = true;
+            user_button.Click += user_button_Click;
+            // 
             // MainMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(673, 342);
+            ClientSize = new Size(684, 361);
+            Controls.Add(user_button);
             Controls.Add(ipc_accum_button);
             Controls.Add(work_record_button);
             Controls.Add(military_record_button);
@@ -107,5 +118,6 @@
         private Button military_record_button;
         private Button work_record_button;
         private Button ipc_accum_button;
+        private Button user_button;
     }
 }

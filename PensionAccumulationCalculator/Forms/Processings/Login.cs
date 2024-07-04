@@ -17,9 +17,16 @@ namespace PensionAccumulationCalculator.Forms {
         private async void LoginButton_Click(object sender, EventArgs e) {
             User? user = new () { Login = _loginTextBox.Text, Password = _passwordTextBox.Text };
 
-            var users = (await _userService.GetAllAsync()).Data;
+            var response = await _userService.GetAllAsync();
 
-            user = users.FirstOrDefault(u => u?.Login == user.Login && u.Password == user.Password, null);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK) {
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var users = response.Data;
+
+            user = users?.FirstOrDefault(u => u?.Login == user.Login && u.Password == user.Password, null);
 
             if (user != null) {
                 Hide();

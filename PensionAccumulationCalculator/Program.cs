@@ -4,6 +4,8 @@ using PensionAccumulationCalculator.Services.Implementations;
 
 namespace PensionAccumulationCalculator {
     internal static class Program {
+        public static int ConnectionWaitingTime { get; } = 5000;
+
         [STAThread]
         static void Main() {
             ApplicationConfiguration.Initialize();

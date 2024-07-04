@@ -50,12 +50,12 @@ namespace PensionAccumulationCalculator.Forms {
         private async void InsuranceRecordElement_Load(object? sender, EventArgs e) {
             if (_action == CRUDAction.Create) { return; }
 
-            Insurance_record entity = (await _recordService.GetByIdAsync(_id)).Data;
+            Insurance_record? entity = (await _recordService.GetByIdAsync(_id)).Data;
 
-            _idTextBox.Text = entity.Insurance_exp_id.ToString();
-            _userIdTextBox.Text = entity.User_id.ToString();
-            _coefficientTextBox.Text = entity.Individual_pension_coefficient.ToString();
-            _yearTextBox.Text = entity.Year.ToString();
+            _idTextBox.Text = entity?.Insurance_exp_id.ToString();
+            _userIdTextBox.Text = entity?.User_id.ToString();
+            _coefficientTextBox.Text = entity?.Individual_pension_coefficient.ToString();
+            _yearTextBox.Text = entity?.Year.ToString();
         }
 
         private async void Create(object? sender, EventArgs e) {
@@ -68,7 +68,7 @@ namespace PensionAccumulationCalculator.Forms {
             var response = await _recordService.TryCreateAsync(record);
 
             if (response.Data == false) {
-                //MessageBox.Show();
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK);
             }
 
             Close();

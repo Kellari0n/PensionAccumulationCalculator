@@ -1,10 +1,10 @@
-﻿using PensionAccumulationCalculator.Enums;
+﻿using System.Net;
 
 namespace PensionAccumulationCalculator.Services.Responses {
     public class BaseResponse<DataT>
     {
-        public required DataT Data { get; set; }
-        public required StatusCode StatusCode { get; set; }
+        public DataT? Data { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
         public string Description { get; set; } = string.Empty;
     }
 }

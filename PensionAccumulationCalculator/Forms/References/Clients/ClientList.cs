@@ -1,40 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using PensionAccumulationCalculator.Enums;
+using PensionAccumulationCalculator.Forms.References.Users;
+using PensionAccumulationCalculator.Services.Interfaces;
 
-namespace PensionAccumulationCalculator.Forms.ClientProfile
-{
-    public partial class ClientList : Form
-    {
-        public ClientList()
-        {
+namespace PensionAccumulationCalculator.Forms.Users {
+    public partial class ClientList : Form {
+        private readonly IUserService _userService;
+        public ClientList(IUserService userService) {
+            _userService = userService;
+
             InitializeComponent();
         }
 
-        private void Add_Click(object sender, EventArgs e)
-        {
-
+        private async void UsersList_Load(object? sender, EventArgs e) {
+            await UpdateListAsync();
         }
 
-        private void Edit_Click(object sender, EventArgs e)
-        {
-
+        private void Add_Click(object sender, EventArgs e) {
+            var userForm = new ClientElement(_userService, CRUDAction.Create);
+            userForm.FormClosed += async (sender, e) => {
+                await UpdateListAsync();
+                this.Visible = true;
+            };
+            this.Visible = false;
+            userForm.Show(this);
         }
 
-        private void Delete_Click(object sender, EventArgs e)
-        {
+        private void Edit_Click(object sender, EventArgs e) {
+            var selectedId = GetSelectedIds().FirstOrDefault(0);
 
+            if (selectedId == 0) { return; }
+
+            var userForm = new ClientElement(_userService, CRUDAction.Update, selectedId);
+            userForm.FormClosed += async (sender, e) => {
+                await UpdateListAsync();
+                this.Visible = true;
+            };
+            this.Visible = false;
+            userForm.Show(this);
         }
 
-        private void ExitToMenu_Click(object sender, EventArgs e)
-        {
+        private async void Delete_Click(object sender, EventArgs e) {
+            var selectedIds = GetSelectedIds();
 
+            if (selectedIds.Count == 0) { return; }
+            else if (selectedIds.Count == 1) {
+                var userForm = new ClientElement(_userService, CRUDAction.Delete, selectedIds.First());
+                userForm.FormClosed += async (sender, e) => {
+                    await UpdateListAsync();
+                    this.Visible = true;
+                };
+                this.Visible = false;
+                userForm.Show(this);
+            }
+            else {
+                foreach (var id in selectedIds) { 
+                    if (!(await _userService.TryDeleteAsync(id)).Data) {
+                        //MessageBox.Show();
+                    }
+                }
+                await UpdateListAsync();
+            }
+        }
+
+        private void ExitToMenu_Click(object sender, EventArgs e) {
+            Close();
+        }
+
+        private async Task UpdateListAsync() {
+            var response = await _userService.GetClientsAsync();
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK) {
+                //MessageBox.Show();
+                return;
+            }
+
+            _dataGridView.DataSource = response.Data;
+        }
+
+        private List<int> GetSelectedIds() {
+            List<int> selectedRows = new();
+            for (int i = 0; i < _dataGridView.SelectedCells.Count; i++) {
+                if (!selectedRows.Contains(_dataGridView.SelectedCells[i].RowIndex)) {
+                    selectedRows.Add(_dataGridView.SelectedCells[i].RowIndex);
+                }
+            }
+
+            List<int> selectedIds = new();
+            foreach (int i in selectedRows) {
+                selectedIds.Add((int)_dataGridView.Rows[i].Cells[0].Value);
+            }
+
+            return selectedIds;
         }
     }
 }
