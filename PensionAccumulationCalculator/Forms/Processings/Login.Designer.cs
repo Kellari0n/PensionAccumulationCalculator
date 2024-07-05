@@ -22,8 +22,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             _logoLabel = new Label();
             _loginButton = new Button();
             _loginLabel = new Label();
@@ -110,6 +109,7 @@
             Controls.Add(_logoLabel);
             Name = "Login";
             Text = "Авторизация";
+            Load += Login_Load;
             ResumeLayout(false);
             PerformLayout();
         }

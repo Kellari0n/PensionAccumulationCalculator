@@ -1,4 +1,6 @@
-﻿using PensionAccumulationCalculator.Entities;
+﻿using Azure;
+
+using PensionAccumulationCalculator.Entities;
 using PensionAccumulationCalculator.Enums;
 using PensionAccumulationCalculator.Services.Interfaces;
 
@@ -51,7 +53,7 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
             var response = await _userService.TryCreateAsync(user);
             
             if (response.Data == false) {
-                //MessageBox.Show();
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();
@@ -64,10 +66,10 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
                 Password = _passwordTextBox.Text,
             };
 
-            var userResponse = await _userService.TryUpdateAsync(user);
+            var response = await _userService.TryUpdateAsync(user);
 
-            if (userResponse.Data == false) {
-                //MessageBox.Show();
+            if (response.Data == false) {
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();
@@ -77,7 +79,7 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
             var response = await _userService.TryDeleteAsync(_id);
 
             if (response.Data == false) {
-                //MessageBox.Show();
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();
@@ -85,13 +87,15 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
 
         private async void UserElement_Load(object? sender, EventArgs e) {
             if (_CRUDAction != CRUDAction.Create) { 
-                User? user = (await _userService.GetByIdAsync(_id)).Data;
+                var response = await _userService.GetByIdAsync(_id);
 
-                if (user == null) {
-                    //MessageBox.Show();
+                if (response.Data == null) {
+                    MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Close(); 
                     return;
                 }
+
+                User user = response.Data;
 
                 _idTextBox.Text = user.User_id.ToString();
                 _loginTextBox.Text = user.Login;

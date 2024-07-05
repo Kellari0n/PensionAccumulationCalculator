@@ -68,7 +68,7 @@ namespace PensionAccumulationCalculator.Forms {
             var response = await _recordService.TryCreateAsync(record);
 
             if (response.Data == false) {
-                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK);
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();
@@ -85,7 +85,7 @@ namespace PensionAccumulationCalculator.Forms {
             var response = await _recordService.TryUpdateAsync(record);
 
             if (response.Data == false) {
-                //MessageBox.Show();
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();
@@ -95,7 +95,7 @@ namespace PensionAccumulationCalculator.Forms {
             var response = await _recordService.TryDeleteAsync(_id);
 
             if (response.Data == false) {
-                //MessageBox.Show();
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();

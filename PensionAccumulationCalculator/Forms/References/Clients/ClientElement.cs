@@ -1,4 +1,6 @@
-﻿using PensionAccumulationCalculator.Entities;
+﻿using Azure;
+
+using PensionAccumulationCalculator.Entities;
 using PensionAccumulationCalculator.Enums;
 using PensionAccumulationCalculator.Services.Interfaces;
 
@@ -76,10 +78,10 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
                 Phone_number = _phoneTextBox.Text,
             };
 
-            var clientResponse = await _userService.TryUpdateClientAsync(client);
+            var response = await _userService.TryUpdateClientAsync(client);
 
-            if (clientResponse.Data == false) {
-                //MessageBox.Show();
+            if (response.Data == false) {
+                MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             Close();
@@ -97,13 +99,15 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
 
         private async void UserElement_Load(object? sender, EventArgs e) {
             if (_CRUDAction != CRUDAction.Create) { 
-                Client? client = (await _userService.GetClientByIdAsync(_id)).Data;
+                var response = await _userService.GetClientByIdAsync(_id);
 
-                if (client == null) {
-                    //MessageBox.Show();
+                if (response.Data == null) {
+                    MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Close();
                     return;
                 }
+
+                Client client = response.Data;
 
                 _idTextBox.Text = client.User_id.ToString();
                 _secondNameTextBox.Text = client.Second_name;

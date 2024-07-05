@@ -1,8 +1,4 @@
 ﻿using PensionAccumulationCalculator.Entities;
-using PensionAccumulationCalculator.Forms.MiliraryRecord;
-using PensionAccumulationCalculator.Forms.WorkRecord;
-using PensionAccumulationCalculator.Repos.Implementations;
-using PensionAccumulationCalculator.Services.Implementations;
 using PensionAccumulationCalculator.Services.Interfaces;
 
 namespace PensionAccumulationCalculator.Forms {
@@ -14,8 +10,8 @@ namespace PensionAccumulationCalculator.Forms {
             InitializeComponent();
         }
 
-        private async void LoginButton_Click(object sender, EventArgs e) {
-            User? user = new () { Login = _loginTextBox.Text, Password = _passwordTextBox.Text };
+        private async void LoginButton_Click(object? sender, EventArgs e) {
+            User? user = new() { Login = _loginTextBox.Text, Password = _passwordTextBox.Text };
 
             var response = await _userService.GetAllAsync();
 
@@ -34,6 +30,11 @@ namespace PensionAccumulationCalculator.Forms {
                 mainMenu.FormClosed += (sender, e) => this.Close();
                 mainMenu.Show(this);
             }
+        }
+
+        private void Login_Load(object? sender, EventArgs e) {
+            _loginTextBox.KeyDown += (sender, e) => { if (e.KeyCode == Keys.Enter) { LoginButton_Click(sender, e); }  };
+            _passwordTextBox.KeyDown += (sender, e) => { if (e.KeyCode == Keys.Enter) { LoginButton_Click(sender, e); } };
         }
     }
 }
