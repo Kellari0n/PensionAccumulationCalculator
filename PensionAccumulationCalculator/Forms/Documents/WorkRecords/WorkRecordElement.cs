@@ -49,12 +49,12 @@ namespace PensionAccumulationCalculator.Forms {
         private async void InsuranceRecordElement_Load(object? sender, EventArgs e) {
             if (_action == CRUDAction.Create) { return; }
 
-            Work_record entity = (await _recordService.GetByIdAsync(_id)).Data;
+            Work_record? entity = (await _recordService.GetByIdAsync(_id)).Data;
 
-            _idTextBox.Text = entity.Work_exp_id.ToString();
-            _userIdTextBox.Text = entity.User_id.ToString();
-            _coefficientTextBox.Text = entity.Individual_pension_coefficient.ToString();
-            _yearTextBox.Text = entity.Year.ToString();
+            _idTextBox.Text = entity?.Work_exp_id.ToString();
+            _userIdTextBox.Text = entity?.User_id.ToString();
+            _coefficientTextBox.Text = entity?.Individual_pension_coefficient.ToString();
+            _yearTextBox.Text = entity?.Year.ToString();
         }
 
         private async void Create(object? sender, EventArgs e) {

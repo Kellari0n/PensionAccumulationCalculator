@@ -11,7 +11,7 @@ GO
 
 CREATE TABLE Ref_tables (
 	table_id INT PRIMARY KEY IDENTITY(1,1),
-	table_name NVARCHAR(50)
+	table_name NVARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Clients (
@@ -25,50 +25,50 @@ CREATE TABLE Clients (
 
 CREATE TABLE Users (
 	User_id INT PRIMARY KEY IDENTITY(1,1),
-	Login NVARCHAR(50) UNIQUE,
-	Password NVARCHAR(32),
+	Login NVARCHAR(50) NOT NULL UNIQUE CLUSTERED,
+	Password NVARCHAR(32) NOT NULL,
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id)
 );
 
 CREATE TABLE Ref_coefficients_cost_by_year (
 	Year INT PRIMARY KEY IDENTITY(1,1),
-	Cost DECIMAL(6,2)
+	Cost DECIMAL(6,2) NOT NULL
 );
 
 CREATE TABLE Work_records (
 	Work_exp_id INT PRIMARY KEY IDENTITY(1,1),
-	User_id INT,
-	Individual_pension_coefficient DECIMAL(6,2),
-	Year INT,
+	User_id INT NOT NULL,
+	Individual_pension_coefficient DECIMAL(6,2) NOT NULL,
+	Year INT NOT NULL,
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
 	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Insurance_records (
 	Insurance_exp_id INT PRIMARY KEY IDENTITY(1,1),
-	User_id INT,
-	Individual_pension_coefficient DECIMAL(6,2),
-	Year INT,
+	User_id INT NOT NULL,
+	Individual_pension_coefficient DECIMAL(6,2) NOT NULL,
+	Year INT NOT NULL,
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
 	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Military_records (
 	Military_exp_id INT PRIMARY KEY IDENTITY(1,1),
-	User_id INT,
-	Individual_pension_coefficient DECIMAL(6,2),
-	Year INT,
+	User_id INT NOT NULL,
+	Individual_pension_coefficient DECIMAL(6,2) NOT NULL,
+	Year INT NOT NULL,
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
 	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Individual_pencion_coefficient_accumulation (
 	Accumulation_exp_id INT PRIMARY KEY IDENTITY(1,1),
-	User_id INT,
-	Record_id INT,
-	Table_id INT,
-	Individual_pension_coefficient DECIMAL(6,2),
-	Year INT,
+	User_id INT NOT NULL,
+	Record_id INT NOT NULL,
+	Table_id INT NOT NULL,
+	Individual_pension_coefficient DECIMAL(6,2) NOT NULL,
+	Year INT NOT NULL,
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
 	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year),
 	FOREIGN KEY (Table_id) REFERENCES Ref_tables(table_id)
@@ -239,6 +239,55 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE dbo.GetUserXsd AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Users
+		WHERE User_id = 0
+		FOR XML RAW('User'), TYPE, XMLSCHEMA, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetUserXml 
+	@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Users
+		WHERE User_id = @id
+		FOR XML RAW('User'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetUsersXml AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Users
+		FOR XML RAW('User'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
 -- CLIENTS
 
 CREATE PROCEDURE dbo.GetClientById
@@ -294,6 +343,55 @@ BEGIN
 		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
 		SELECT CAST(0 AS BIT);
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE dbo.GetClientXsd AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Clients
+		WHERE User_id = 0
+		FOR XML RAW('Client'), TYPE, XMLSCHEMA, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetClientXml 
+	@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Clients
+		WHERE User_id = @id
+		FOR XML RAW('Client'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetClientsXml AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Clients
+		FOR XML RAW('Client'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 2, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -401,6 +499,55 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE dbo.GetWorkRecordXsd AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Work_records
+		WHERE Work_exp_id = 0
+		FOR XML RAW('WorkRecord'), TYPE, XMLSCHEMA, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetWorkRecordXml 
+	@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Work_records
+		WHERE Work_exp_id = @id
+		FOR XML RAW('WorkRecord'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetWorkRecordsXml AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Work_records
+		FOR XML RAW('WorkRecord'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
 --INSURANCE_RECORDS
 
 CREATE PROCEDURE dbo.CreateInsuranceRecord
@@ -500,6 +647,55 @@ BEGIN
 		DBCC CHECKIDENT ('Work_records', RESEED);
 
 		SELECT CAST(0 AS BIT);
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE dbo.GetInsuranceRecordXsd AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Insurance_records
+		WHERE Insurance_exp_id = 0
+		FOR XML RAW('InsuranceRecord'), TYPE, XMLSCHEMA, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetInsuranceRecordXml 
+	@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Insurance_records
+		WHERE Insurance_exp_id = @id
+		FOR XML RAW('InsuranceRecord'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetInsuranceRecordsXml AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Insurance_records
+		FOR XML RAW('InsuranceRecord'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
@@ -607,6 +803,55 @@ BEGIN
 END
 GO
 
+CREATE PROCEDURE dbo.GetMilitaryRecordXsd AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Military_records
+		WHERE Military_exp_id = 0
+		FOR XML RAW('MilitaryRecord'), TYPE, XMLSCHEMA, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetMilitaryRecordXml 
+	@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Military_records
+		WHERE Military_exp_id = @id
+		FOR XML RAW('MilitaryRecord'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetMilitaryRecordsXml AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Military_records
+		FOR XML RAW('MilitaryRecord'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
 -- INDIVIDUAL_PENCION_COEFFICIENT_ACCUMULATION
 
 CREATE PROCEDURE dbo.CreateIndividualPencionCoefficientAccumulation
@@ -710,6 +955,55 @@ BEGIN
 		DBCC CHECKIDENT ('Individual_pencion_coefficient_accumulation', RESEED);
 
 		SELECT CAST(0 AS BIT);
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE dbo.GetIndividualPencionCoefficientAccumulationXsd AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Individual_pencion_coefficient_accumulation
+		WHERE Accumulation_exp_id = 0
+		FOR XML RAW('IndividualPencionCoefficientAccumulation'), TYPE, XMLSCHEMA, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE GetIndividualPencionCoefficientAccumulationXml 
+	@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Individual_pencion_coefficient_accumulation
+		WHERE Accumulation_exp_id = @id
+		FOR XML RAW('IndividualPencionCoefficientAccumulation'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE IndividualPencionCoefficientAccumulation AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT *
+		FROM Individual_pencion_coefficient_accumulation
+		FOR XML RAW('IndividualPencionCoefficientAccumulation'), TYPE, ELEMENTS;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 	END CATCH
 END
 GO
