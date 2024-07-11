@@ -1,0 +1,14 @@
+<Users>
+  <User>
+    <Login>test1</Login>
+    <Password>test1</Password>
+  </User>
+  <User>
+    <Login>test2</Login>
+    <Password>test2</Password>
+  </User>
+  <User>
+    <Login>test3</Login>
+    <Password>test3</Password>
+  </User>
+</Users>

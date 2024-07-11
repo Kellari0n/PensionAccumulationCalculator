@@ -22,21 +22,6 @@ namespace PensionAccumulationCalculator.Repos {
             xml.Validate(ValidationCallBack);
         }
 
-        public static void Validate(ICollection<string> xmls, string xsd) {
-            var schemas = new XmlSchemaSet();
-            var schema = XmlSchema.Read(new StringReader(xsd), ValidationCallBack) 
-                ?? throw new XmlSchemaValidationException();
-            schemas.Add(schema);
-
-            foreach (var xml in xmls) {
-                var doc = new XmlDocument();
-
-                doc.LoadXml(xml);
-                doc.Schemas = schemas;
-                doc.Validate(ValidationCallBack);
-            }
-        }
-
         private static void ValidationCallBack(object? sender, ValidationEventArgs args) {
             if (args.Severity == XmlSeverityType.Error) {
                 throw new XmlSchemaValidationException();

@@ -1,5 +1,8 @@
 ﻿using PensionAccumulationCalculator.Entities;
+using PensionAccumulationCalculator.Repos.Implementations;
 using PensionAccumulationCalculator.Services.Interfaces;
+
+using System.Xml;
 
 namespace PensionAccumulationCalculator.Forms {
     public partial class Login : Form {
@@ -32,7 +35,7 @@ namespace PensionAccumulationCalculator.Forms {
             }
         }
 
-        private void Login_Load(object? sender, EventArgs e) {
+        private async void Login_Load(object? sender, EventArgs e) {
             _loginTextBox.KeyDown += (sender, e) => { if (e.KeyCode == Keys.Enter) { LoginButton_Click(sender, e); }  };
             _passwordTextBox.KeyDown += (sender, e) => { if (e.KeyCode == Keys.Enter) { LoginButton_Click(sender, e); } };
         }

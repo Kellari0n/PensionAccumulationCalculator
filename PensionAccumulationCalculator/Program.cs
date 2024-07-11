@@ -1,7 +1,8 @@
 using PensionAccumulationCalculator.Forms;
 using PensionAccumulationCalculator.Repos.Implementations;
-using PensionAccumulationCalculator.Repos.Interfaces;
 using PensionAccumulationCalculator.Services.Implementations;
+
+using System.Xml;
 
 namespace PensionAccumulationCalculator {
     internal static class Program {
@@ -9,8 +10,20 @@ namespace PensionAccumulationCalculator {
 
         [STAThread]
         static void Main() {
+            AppContext.SetSwitch("Switch.System.Xml.AllowDefaultResolver", true);
             ApplicationConfiguration.Initialize();
+
+            Test();
+
             Application.Run(new Login(new UserService(new UserRepo())));
+        }
+
+        private async static void Test() {
+            XmlDocument xml = new XmlDocument();
+            xml.Load("C:\\Projects\\PensionAccumulationCalculator\\test.xml");
+
+            UserRepo userRepo = new UserRepo();
+            await userRepo.TryImportXmlAsync(xml);
         }
     }
 }

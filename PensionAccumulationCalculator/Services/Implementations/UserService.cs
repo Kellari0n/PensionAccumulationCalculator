@@ -241,8 +241,8 @@ namespace PensionAccumulationCalculator.Services.Implementations {
             return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
         }
 
-        public Task<BaseResponse<bool>> TryImportXmlAsync(XmlDocument xml) {
-            throw new NotImplementedException();
+        public async Task<BaseResponse<bool>> TryImportXmlAsync(XmlDocument xml) {
+            return new BaseResponse<bool> { Data = await _userRepo.TryImportXmlAsync(xml), StatusCode = HttpStatusCode.OK };
         }
 
         public async Task<BaseResponse<bool>> TryUpdateAsync(User user) {

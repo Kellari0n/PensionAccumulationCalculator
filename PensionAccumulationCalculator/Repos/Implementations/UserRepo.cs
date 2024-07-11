@@ -6,6 +6,7 @@ using PensionAccumulationCalculator.Repos.Interfaces;
 using System.Configuration;
 using System.Data;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace PensionAccumulationCalculator.Repos.Implementations {
     internal class UserRepo : IUserRepo {
@@ -320,8 +321,55 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
             }
         }
 
-        public Task<bool> TryImportXmlAsync(XmlDocument xml) {
-            throw new NotImplementedException();
+        public async Task<bool> TryImportXmlAsync(XmlDocument xml) {
+            string xsd;
+
+            using (var connection = new SqlConnection(_connectionString)) {
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
+                using (var cmd = new SqlCommand("dbo.GetUserXsd", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        xsd = reader.GetString(0);
+                    }
+                }
+            }
+
+            if (xml.DocumentElement?.FirstChild?.Name == "User") {
+                foreach (XmlNode node in xml.DocumentElement.ChildNodes) {
+                    XmlValidator.Validate(node.OuterXml, xsd);
+
+                    string login = node["Login"]?.InnerText ?? string.Empty;
+                    string password = node["Password"]?.InnerText ?? string.Empty;
+
+                    User user = new User { Login = login, Password = password };
+
+                    if (!await TryCreateAsync(user)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else {
+                XmlValidator.Validate(xml, xsd);
+
+                string login = xml["User_id"]?.InnerText ?? string.Empty;
+                string password = xml["Password"]?.InnerText ?? string.Empty;
+
+                User user = new User { Login = login, Password = password };
+
+                return await TryCreateAsync(user);
+            }
         }
     }
 }
