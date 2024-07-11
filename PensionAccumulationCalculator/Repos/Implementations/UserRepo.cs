@@ -5,6 +5,7 @@ using PensionAccumulationCalculator.Repos.Interfaces;
 
 using System.Configuration;
 using System.Data;
+using System.Xml;
 
 namespace PensionAccumulationCalculator.Repos.Implementations {
     internal class UserRepo : IUserRepo {
@@ -262,6 +263,65 @@ namespace PensionAccumulationCalculator.Repos.Implementations {
                     }
                 }
             }
+        }
+
+        public async Task<XmlDocument> ExportXmlByIdAsync(int id) {
+            using (var connection = new SqlConnection(_connectionString)) {
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
+                using (var cmd = new SqlCommand("dbo.GetUserXml", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        XmlDocument document = new XmlDocument();
+
+                        document.LoadXml(reader.GetString(0));
+
+                        return document;
+                    }
+                }
+            }
+        }
+
+        public async Task<XmlDocument> ExportXmlAsync() {
+            using (var connection = new SqlConnection(_connectionString)) {
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+                var openConnTask = connection.OpenAsync(tokenSource.Token);
+
+                if (Task.WaitAny(openConnTask, Task.Delay(Program.ConnectionWaitingTime, tokenSource.Token)) == 1 || openConnTask.IsFaulted) {
+                    tokenSource.Cancel();
+                    throw new TimeoutException();
+                }
+
+                using (var cmd = new SqlCommand("dbo.GetUsersXml", connection)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    using (var reader = await cmd.ExecuteReaderAsync()) {
+                        await reader.ReadAsync();
+
+                        XmlDocument document = new XmlDocument();
+
+                        document.LoadXml(reader.GetString(0));
+
+                        return document;
+                    }
+                }
+            }
+        }
+
+        public Task<bool> TryImportXmlAsync(XmlDocument xml) {
+            throw new NotImplementedException();
         }
     }
 }

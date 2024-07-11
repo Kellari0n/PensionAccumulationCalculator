@@ -14,10 +14,18 @@ namespace PensionAccumulationCalculator.Repos {
             doc.Validate(ValidationCallBack);
         }
 
+        public static void Validate(XmlDocument xml, string xsd) {
+            var schema = XmlSchema.Read(new StreamReader(xsd), ValidationCallBack)
+                ?? throw new XmlSchemaValidationException();
+            xml.Schemas.Add(schema);
+
+            xml.Validate(ValidationCallBack);
+        }
+
         public static void Validate(ICollection<string> xmls, string xsd) {
             var schemas = new XmlSchemaSet();
             var schema = XmlSchema.Read(new StringReader(xsd), ValidationCallBack) 
-                ?? throw new XmlSchemaValidationException("Xml Schema was not found");
+                ?? throw new XmlSchemaValidationException();
             schemas.Add(schema);
 
             foreach (var xml in xmls) {

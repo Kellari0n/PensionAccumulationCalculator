@@ -28,7 +28,7 @@ namespace PensionAccumulationCalculator.Forms {
                 Hide();
                 MainMenu mainMenu = new MainMenu();
                 mainMenu.FormClosed += (sender, e) => this.Close();
-                mainMenu.Show(this);
+                mainMenu.Show();
             }
         }
 

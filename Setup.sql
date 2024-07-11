@@ -279,7 +279,8 @@ BEGIN
 	BEGIN TRY
 		SELECT *
 		FROM Users
-		FOR XML RAW('User'), TYPE, ELEMENTS;
+		ORDER BY User_id
+		FOR XML RAW('User'), TYPE, ELEMENTS, ROOT('Users');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
@@ -387,7 +388,8 @@ BEGIN
 	BEGIN TRY
 		SELECT *
 		FROM Clients
-		FOR XML RAW('Client'), TYPE, ELEMENTS;
+		ORDER BY User_id
+		FOR XML RAW('Client'), TYPE, ELEMENTS, ROOT('Clients');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
@@ -539,7 +541,8 @@ BEGIN
 	BEGIN TRY
 		SELECT *
 		FROM Work_records
-		FOR XML RAW('WorkRecord'), TYPE, ELEMENTS;
+		ORDER BY Work_exp_id
+		FOR XML RAW('WorkRecord'), TYPE, ELEMENTS, ROOT('WorkRecords');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
@@ -691,7 +694,8 @@ BEGIN
 	BEGIN TRY
 		SELECT *
 		FROM Insurance_records
-		FOR XML RAW('InsuranceRecord'), TYPE, ELEMENTS;
+		ORDER BY Insurance_exp_id
+		FOR XML RAW('InsuranceRecord'), TYPE, ELEMENTS, ROOT('InsuranceRecords');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
@@ -843,7 +847,8 @@ BEGIN
 	BEGIN TRY
 		SELECT *
 		FROM Military_records
-		FOR XML RAW('MilitaryRecord'), TYPE, ELEMENTS;
+		ORDER BY Military_exp_id
+		FOR XML RAW('MilitaryRecord'), TYPE, ELEMENTS, ROOT('MilitaryRecords');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
@@ -999,7 +1004,8 @@ BEGIN
 	BEGIN TRY
 		SELECT *
 		FROM Individual_pencion_coefficient_accumulation
-		FOR XML RAW('IndividualPencionCoefficientAccumulation'), TYPE, ELEMENTS;
+		ORDER BY Accumulation_exp_id
+		FOR XML RAW('IndividualPencionCoefficientAccumulation'), TYPE, ELEMENTS, ROOT('IndividualPencionCoefficientAccumulations');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)

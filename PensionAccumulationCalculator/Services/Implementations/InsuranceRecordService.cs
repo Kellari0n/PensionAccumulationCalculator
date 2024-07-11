@@ -4,6 +4,7 @@ using PensionAccumulationCalculator.Services.Interfaces;
 using PensionAccumulationCalculator.Services.Responses;
 
 using System.Net;
+using System.Xml;
 
 namespace PensionAccumulationCalculator.Services.Implementations {
     internal class InsuranceRecordService : IInsuranceRecordService {
@@ -11,6 +12,14 @@ namespace PensionAccumulationCalculator.Services.Implementations {
 
         public InsuranceRecordService(IInsuranceRecordRepo insuranceRecordRepo) {
             _recordRepo = insuranceRecordRepo;
+        }
+
+        public async Task<BaseResponse<XmlDocument>> ExportXmlAsync() {
+            return new BaseResponse<XmlDocument> { Data = await _recordRepo.ExportXmlAsync(), StatusCode = HttpStatusCode.OK};
+        }
+
+        public async Task<BaseResponse<XmlDocument>> ExportXmlByIdAsync(int id) {
+            return new BaseResponse<XmlDocument> { Data = await _recordRepo.ExportXmlByIdAsync(id), StatusCode = HttpStatusCode.OK };
         }
 
         public async Task<BaseResponse<ICollection<Insurance_record>>> GetAllAsync() {
@@ -138,6 +147,10 @@ namespace PensionAccumulationCalculator.Services.Implementations {
             }
 
             return new BaseResponse<bool> { Data = data, StatusCode = statusCode, Description = description };
+        }
+
+        public Task<BaseResponse<bool>> TryImportXmlAsync(XmlDocument xml) {
+            throw new NotImplementedException();
         }
 
         public async Task<BaseResponse<bool>> TryUpdateAsync(Insurance_record entity) {
