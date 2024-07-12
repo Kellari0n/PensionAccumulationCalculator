@@ -32,6 +32,7 @@
             _updateButton = new Button();
             _deleteButton = new Button();
             _exitToMenuButton = new Button();
+            _exportButton = new Button();
             ((System.ComponentModel.ISupportInitialize)_dataGridView).BeginInit();
             SuspendLayout();
             // 
@@ -83,11 +84,22 @@
             _exitToMenuButton.UseVisualStyleBackColor = true;
             _exitToMenuButton.Click += ExitToMenu_Click;
             // 
+            // _exportButton
+            // 
+            _exportButton.Location = new Point(254, 497);
+            _exportButton.Name = "_exportButton";
+            _exportButton.Size = new Size(163, 52);
+            _exportButton.TabIndex = 5;
+            _exportButton.Text = "Экспорт";
+            _exportButton.UseVisualStyleBackColor = true;
+            _exportButton.Click += ExportButton_Click;
+            // 
             // UsersList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(984, 561);
+            Controls.Add(_exportButton);
             Controls.Add(_exitToMenuButton);
             Controls.Add(_deleteButton);
             Controls.Add(_updateButton);
@@ -107,5 +119,6 @@
         private Button _updateButton;
         private Button _deleteButton;
         private Button _exitToMenuButton;
+        private Button _exportButton;
     }
 }

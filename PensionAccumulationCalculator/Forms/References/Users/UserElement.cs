@@ -1,8 +1,8 @@
-﻿using Azure;
-
-using PensionAccumulationCalculator.Entities;
+﻿using PensionAccumulationCalculator.Entities;
 using PensionAccumulationCalculator.Enums;
 using PensionAccumulationCalculator.Services.Interfaces;
+
+using System.Xml;
 
 namespace PensionAccumulationCalculator.Forms.References.Users {
     public partial class UserElement : Form {
@@ -45,13 +45,13 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
         }
 
         private async void Create(object? sender, EventArgs e) {
-            User user = new () {
+            User user = new() {
                 Login = _loginTextBox.Text,
                 Password = _passwordTextBox.Text,
             };
 
             var response = await _userService.TryCreateAsync(user);
-            
+
             if (response.Data == false) {
                 MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -60,7 +60,7 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
         }
 
         private async void Update(object? sender, EventArgs e) {
-            User user = new () {
+            User user = new() {
                 User_id = _id,
                 Login = _loginTextBox.Text,
                 Password = _passwordTextBox.Text,
@@ -86,12 +86,12 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
         }
 
         private async void UserElement_Load(object? sender, EventArgs e) {
-            if (_CRUDAction != CRUDAction.Create) { 
+            if (_CRUDAction != CRUDAction.Create) {
                 var response = await _userService.GetByIdAsync(_id);
 
                 if (response.Data == null) {
                     MessageBox.Show(response.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Close(); 
+                    Close();
                     return;
                 }
 
@@ -100,6 +100,29 @@ namespace PensionAccumulationCalculator.Forms.References.Users {
                 _idTextBox.Text = user.User_id.ToString();
                 _loginTextBox.Text = user.Login;
                 _passwordTextBox.Text = user.Password;
+            }
+        }
+
+        private async void ImportButton_Click(object sender, EventArgs e) {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog()) {
+                openFileDialog.Filter = "Xml|*.xml";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK) {
+                    XmlDocument xml = new XmlDocument();
+                    xml.Load(openFileDialog.OpenFile());
+
+                    var resp = await _userService.TryImportXmlAsync(xml);
+
+                    if (resp.Data) {
+                        MessageBox.Show("Пользователи успешно добавлены");
+                        Close(); 
+                        return;
+                    }
+                    else {
+                        MessageBox.Show(resp.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Close(); return;
+                    }
+                }
             }
         }
     }

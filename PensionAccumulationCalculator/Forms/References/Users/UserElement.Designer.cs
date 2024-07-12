@@ -31,11 +31,12 @@
             _loginLabel = new Label();
             _passwordLabel = new Label();
             _idLabel = new Label();
+            _importButton = new Button();
             SuspendLayout();
             // 
             // _actionButton
             // 
-            _actionButton.Location = new Point(110, 174);
+            _actionButton.Location = new Point(195, 174);
             _actionButton.Name = "_actionButton";
             _actionButton.Size = new Size(124, 27);
             _actionButton.TabIndex = 4;
@@ -104,11 +105,22 @@
             _idLabel.Text = "ID";
             _idLabel.TextAlign = ContentAlignment.TopRight;
             // 
+            // _importButton
+            // 
+            _importButton.Location = new Point(31, 174);
+            _importButton.Name = "_importButton";
+            _importButton.Size = new Size(124, 27);
+            _importButton.TabIndex = 19;
+            _importButton.Text = "Xml";
+            _importButton.UseVisualStyleBackColor = true;
+            _importButton.Click += ImportButton_Click;
+            // 
             // UserElement
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(350, 213);
+            Controls.Add(_importButton);
             Controls.Add(_passwordTextBox);
             Controls.Add(_loginTextBox);
             Controls.Add(_idTextBox);
@@ -133,5 +145,6 @@
         private Label _loginLabel;
         private Label _passwordLabel;
         private Label _idLabel;
+        private Button _importButton;
     }
 }

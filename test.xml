@@ -2,6 +2,7 @@
   <User>
     <Login>test1</Login>
     <Password>test1</Password>
+    <Test>Test</Test>
   </User>
   <User>
     <Login>test2</Login>
@@ -11,4 +12,8 @@
     <Login>test3</Login>
     <Password>test3</Password>
   </User>
+  <Test>
+    <Test>Test</Test>
+    <Test>Test</Test>
+  </Test>
 </Users>
