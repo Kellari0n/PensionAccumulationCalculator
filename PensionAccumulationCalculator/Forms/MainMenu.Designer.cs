@@ -33,6 +33,7 @@
             work_record_button = new Button();
             ipc_accum_button = new Button();
             user_button = new Button();
+            _calculatorButton = new Button();
             SuspendLayout();
             // 
             // client_button
@@ -43,7 +44,7 @@
             client_button.TabIndex = 0;
             client_button.Text = "Клиенты";
             client_button.UseVisualStyleBackColor = true;
-            client_button.Click += client_button_Click;
+            client_button.Click += Client_button_Click;
             // 
             // insurance_record_button
             // 
@@ -53,7 +54,7 @@
             insurance_record_button.TabIndex = 1;
             insurance_record_button.Text = "Страховой стаж";
             insurance_record_button.UseVisualStyleBackColor = true;
-            insurance_record_button.Click += insurance_record_button_Click;
+            insurance_record_button.Click += Insurance_record_button_Click;
             // 
             // military_record_button
             // 
@@ -63,7 +64,7 @@
             military_record_button.TabIndex = 2;
             military_record_button.Text = "Военный стаж";
             military_record_button.UseVisualStyleBackColor = true;
-            military_record_button.Click += military_record_button_Click;
+            military_record_button.Click += Military_record_button_Click;
             // 
             // work_record_button
             // 
@@ -73,7 +74,7 @@
             work_record_button.TabIndex = 3;
             work_record_button.Text = "Трудовой стаж";
             work_record_button.UseVisualStyleBackColor = true;
-            work_record_button.Click += work_record_button_Click;
+            work_record_button.Click += Work_record_button_Click;
             // 
             // ipc_accum_button
             // 
@@ -83,7 +84,7 @@
             ipc_accum_button.TabIndex = 4;
             ipc_accum_button.Text = "Стоимость ИПК по годам";
             ipc_accum_button.UseVisualStyleBackColor = true;
-            ipc_accum_button.Click += ipc_accum_button_Click;
+            ipc_accum_button.Click += Ipc_accum_button_Click;
             // 
             // user_button
             // 
@@ -93,13 +94,24 @@
             user_button.TabIndex = 5;
             user_button.Text = "Пользователи";
             user_button.UseVisualStyleBackColor = true;
-            user_button.Click += user_button_Click;
+            user_button.Click += User_button_Click;
+            // 
+            // _calculatorButton
+            // 
+            _calculatorButton.Location = new Point(12, 352);
+            _calculatorButton.Name = "_calculatorButton";
+            _calculatorButton.Size = new Size(140, 40);
+            _calculatorButton.TabIndex = 6;
+            _calculatorButton.Text = "Калькулятор";
+            _calculatorButton.UseVisualStyleBackColor = true;
+            _calculatorButton.Click += СalculatorButton_Click;
             // 
             // MainMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(684, 361);
+            ClientSize = new Size(684, 404);
+            Controls.Add(_calculatorButton);
             Controls.Add(user_button);
             Controls.Add(ipc_accum_button);
             Controls.Add(work_record_button);
@@ -119,5 +131,6 @@
         private Button work_record_button;
         private Button ipc_accum_button;
         private Button user_button;
+        private Button _calculatorButton;
     }
 }

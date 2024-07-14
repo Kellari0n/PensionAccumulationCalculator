@@ -531,9 +531,9 @@ BEGIN
 		BEGIN TRANSACTION
 			--CREATE TABLE #WorkRecordData (work_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
 			SELECT * INTO #WorkRecordData FROM Work_records as wr WHERE wr.Work_exp_id = @id
-			DECLARE @old_work_record_IPC DECIMAL(6, 2) = (SELECT d.IPC_count FROM #IPCData as d)
-			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #IPCData as d)
-			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #IPCData as d)
+			DECLARE @old_work_record_IPC DECIMAL(6, 2) = (SELECT d.Individual_pension_coefficient FROM #WorkRecordData as d)
+			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #WorkRecordData as d)
+			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #WorkRecordData as d)
 
 			DELETE FROM Work_records
 			WHERE Work_exp_id = @id;
@@ -751,9 +751,9 @@ BEGIN
 		BEGIN TRANSACTION
 			--CREATE TABLE #WorkRecordData (work_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
 			SELECT * INTO #InsuranceRecordData FROM Insurance_records as ir WHERE ir.Insurance_exp_id = @id
-			DECLARE @old_insurance_record_IPC DECIMAL(6, 2) = (SELECT d.IPC_count FROM #IPCData as d)
-			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #IPCData as d)
-			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #IPCData as d)
+			DECLARE @old_insurance_record_IPC DECIMAL(6, 2) = (SELECT d.Individual_pension_coefficient FROM #InsuranceRecordData as d)
+			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #InsuranceRecordData as d)
+			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #InsuranceRecordData as d)
 
 			DELETE FROM Insurance_records
 			WHERE Insurance_exp_id = @id;
@@ -971,9 +971,9 @@ BEGIN
 		BEGIN TRANSACTION
 			--CREATE TABLE #WorkRecordData (work_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
 			SELECT * INTO #MilitaryRecordData FROM Military_records as mr WHERE mr.Military_exp_id= @id
-			DECLARE @old_military_record_IPC DECIMAL(6, 2) = (SELECT d.IPC_count FROM #IPCData as d)
-			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #IPCData as d)
-			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #IPCData as d)
+			DECLARE @old_military_record_IPC DECIMAL(6, 2) = (SELECT d.Individual_pension_coefficient FROM #MilitaryRecordData as d)
+			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #MilitaryRecordData as d)
+			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #MilitaryRecordData as d)
 
 			DELETE FROM Military_records
 			WHERE Military_exp_id = @id;
@@ -1429,32 +1429,42 @@ END
 GO
 
 CREATE PROCEDURE dbo.GetDataForPensionCalculator
-	@user_id INT,
-	@year INT
+    @user_id INT
 AS 
 BEGIN
-	SET NOCOUNT ON
-	BEGIN TRY
-		SELECT
-			c.First_name,
-			c.Last_name,
-			ipca.Individual_pension_coefficient,
-			rccby.Cost
-		FROM dbo.Users as u
-		LEFT JOIN Individual_pencion_coefficient_accumulation AS ipca
-			ON u.User_id = ipca.User_id
-		LEFT JOIN dbo.Clients as c
-			ON c.User_id = u.User_id
-		LEFT JOIN dbo.Ref_coefficients_cost_by_year as rccby
-			ON rccby.Year = ipca.Year
-		WHERE ipca.Year = @year AND u.User_id = @user_id
-	END TRY
-	BEGIN CATCH
-		INSERT Error_logs(Error_datetime, Source_table_id, Details)
-		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
-	END CATCH
+    SET NOCOUNT ON
+    BEGIN TRY
+        WITH IPC_sum(user_id, ipc_sum) as 
+        (
+            SELECT
+                user_id,
+                sum(ipca.Individual_pension_coefficient) as ipc_sum
+            FROM
+                Individual_pencion_coefficient_accumulation as ipca
+            GROUP BY 
+                user_id
+        )
+        SELECT
+            c.Second_name,
+            c.First_name,
+            c.Last_name,
+            ipcs.ipc_sum,
+            rccby.Cost
+        FROM dbo.Users as u
+        LEFT JOIN IPC_sum AS ipcs
+            ON u.User_id = ipcs.User_id
+        LEFT JOIN dbo.Clients as c
+            ON c.User_id = u.User_id
+        LEFT JOIN dbo.Ref_coefficients_cost_by_year as rccby
+            ON rccby.Year = YEAR(GETDATE())
+        WHERE u.User_id = @user_id
+    END TRY
+    BEGIN CATCH
+        INSERT Error_logs(Error_datetime, Source_table_id, Details)
+        VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+    END CATCH
 END
-GO 
+GO
 
 
 --EXEC  @user_id = 1, @record_id = 2, @table_id = 6, @year = 2015;
