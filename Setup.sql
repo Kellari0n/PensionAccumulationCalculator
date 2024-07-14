@@ -273,27 +273,14 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE GetUsersXml 
-	@start_id INT = 0,
-	@end_id INT = 0
-AS
+CREATE PROCEDURE GetUsersXml AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		IF @start_id = 0 AND @end_id = 0
-		BEGIN
-			SELECT *
-			FROM Users
-			ORDER BY User_id
-			FOR XML RAW('User'), TYPE, ELEMENTS, ROOT('Users');
-		END
-		ELSE BEGIN
-			SELECT *
-			FROM Users
-			WHERE (User_id BETWEEN @start_id AND @end_id)
-			ORDER BY User_id
-			FOR XML RAW('User'), TYPE, ELEMENTS, ROOT('Users');
-		END
+		SELECT *
+		FROM Users
+		ORDER BY User_id
+		FOR XML RAW('User'), TYPE, ELEMENTS, ROOT('Users');
 	END TRY
 	BEGIN CATCH
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)

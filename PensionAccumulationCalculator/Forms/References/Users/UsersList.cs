@@ -2,9 +2,6 @@
 using PensionAccumulationCalculator.Forms.References.Users;
 using PensionAccumulationCalculator.Services.Interfaces;
 
-using System.Xml;
-using System.Xml.Linq;
-
 namespace PensionAccumulationCalculator.Forms.Users {
     public partial class UsersList : Form {
         private readonly IUserService _userService;
@@ -56,7 +53,7 @@ namespace PensionAccumulationCalculator.Forms.Users {
                 userForm.Show(this);
             }
             else {
-                foreach (var id in selectedIds) {
+                foreach (var id in selectedIds) { 
                     if (!(await _userService.TryDeleteAsync(id)).Data) {
                         //MessageBox.Show();
                     }
@@ -94,41 +91,6 @@ namespace PensionAccumulationCalculator.Forms.Users {
             }
 
             return selectedIds;
-        }
-
-        private async void ExportButton_Click(object sender, EventArgs e) {
-            XmlDocument? xmlDocument = new XmlDocument();
-            var ids = GetSelectedIds();
-            
-            if (ids.Count != 1) {
-                var resp = await _userService.ExportXmlAsync();
-                if (resp.StatusCode == System.Net.HttpStatusCode.OK) {
-                    xmlDocument = resp.Data;
-                }
-                else {
-                    MessageBox.Show(resp.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else {
-                var resp = await _userService.ExportXmlByIdAsync(ids.First());
-                if (resp.StatusCode == System.Net.HttpStatusCode.OK) {
-                    xmlDocument = resp.Data;
-                }
-                else {
-                    MessageBox.Show(resp.Description, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-
-            SaveFileDialog saveFileDialog = new SaveFileDialog() {
-                DefaultExt = "*.xml",
-                Filter = "Xml|*.xml",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Downloads",
-                FileName = "export"
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                xmlDocument?.Save(saveFileDialog.FileName);
-            }
         }
     }
 }

@@ -13,6 +13,8 @@ namespace PensionAccumulationCalculator {
             AppContext.SetSwitch("Switch.System.Xml.AllowDefaultResolver", true);
             ApplicationConfiguration.Initialize();
 
+            Test();
+
             Application.Run(new Login(new UserService(new UserRepo())));
         }
 
