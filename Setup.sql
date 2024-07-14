@@ -65,13 +65,10 @@ CREATE TABLE Military_records (
 CREATE TABLE Individual_pencion_coefficient_accumulation (
 	Accumulation_exp_id INT PRIMARY KEY IDENTITY(1,1),
 	User_id INT NOT NULL,
-	Record_id INT NOT NULL,
-	Table_id INT NOT NULL,
 	Individual_pension_coefficient DECIMAL(6,2) NOT NULL,
 	Year INT NOT NULL,
 	FOREIGN KEY (User_id) REFERENCES Clients(User_id),
-	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year),
-	FOREIGN KEY (Table_id) REFERENCES Ref_tables(table_id)
+	FOREIGN KEY (Year) REFERENCES Ref_coefficients_cost_by_year(Year)
 );
 
 CREATE TABLE Error_logs (
@@ -142,6 +139,8 @@ BEGIN
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION;
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 1, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -149,8 +148,6 @@ BEGIN
 		DBCC CHECKIDENT ('Clients', RESEED);
 
 		SELECT CAST(0 AS BIT);
-
-		ROLLBACK TRANSACTION;
 	END CATCH
 END
 GO
@@ -408,12 +405,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		INSERT Work_records(User_id, Individual_pension_coefficient, Year)
-		VALUES (@user_id, @individual_pension_coefficient, @year);
+		BEGIN TRANSACTION
+			INSERT Work_records(User_id, Individual_pension_coefficient, Year)
+			VALUES (@user_id, @individual_pension_coefficient, @year);
 
-		SELECT CAST(1 AS BIT);
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @user_id, @year = @year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc + @individual_pension_coefficient)
+				EXEC UpdateIPCAccumulation @user_id = @user_id, @new_ipc_count = @new_IPC, @year = @year
+			END
+			ELSE 
+			BEGIN
+				EXEC CreateIPCAccumulation @user_id = @user_id, @ipc_count = @individual_pension_coefficient, @year = @year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
+			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -423,6 +441,8 @@ BEGIN
 	END CATCH
 END
 GO 
+
+
 
 CREATE PROCEDURE dbo.GetWorkRecordById
 	@id INT
@@ -464,13 +484,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		UPDATE Work_records
-		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
-		WHERE Work_exp_id = @id;
+		BEGIN TRANSACTION
+			DECLARE @old_work_record_IPC DECIMAL(6, 2) = (SELECT wr.Individual_pension_coefficient FROM Work_records as wr WHERE wr.Work_exp_id = @id)
 
-		SELECT CAST(1 AS BIT);
+			UPDATE Work_records
+			SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
+			WHERE Work_exp_id = @id;
+
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @user_id, @year = @year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc - @old_work_record_IPC + @individual_pension_coefficient)
+				EXEC UpdateIPCAccumulation @user_id = @user_id, @new_ipc_count = @new_IPC, @year = @year
+			END
+			ELSE 
+			BEGIN
+				EXEC CreateIPCAccumulation @user_id = @user_id, @ipc_count = @individual_pension_coefficient, @year = @year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
+			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -485,12 +528,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
+		BEGIN TRANSACTION
+			--CREATE TABLE #WorkRecordData (work_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			SELECT * INTO #WorkRecordData FROM Work_records as wr WHERE wr.Work_exp_id = @id
+			DECLARE @old_work_record_IPC DECIMAL(6, 2) = (SELECT d.IPC_count FROM #IPCData as d)
+			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #IPCData as d)
+			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #IPCData as d)
+
 			DELETE FROM Work_records
 			WHERE Work_exp_id = @id;
 
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @my_user_id, @year = @my_year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc - @old_work_record_IPC)
+				EXEC UpdateIPCAccumulation @user_id = @my_user_id, @new_ipc_count = @new_IPC, @year = @my_year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
 			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 3, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -561,12 +627,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		INSERT Insurance_records(User_id, Individual_pension_coefficient, Year)
-		VALUES (@user_id, @individual_pension_coefficient, @year);
+		BEGIN TRANSACTION
+			INSERT Insurance_records(User_id, Individual_pension_coefficient, Year)
+			VALUES (@user_id, @individual_pension_coefficient, @year);
 
-		SELECT CAST(1 AS BIT);
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @user_id, @year = @year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc + @individual_pension_coefficient)
+				EXEC UpdateIPCAccumulation @user_id = @user_id, @new_ipc_count = @new_IPC, @year = @year
+			END
+			ELSE 
+			BEGIN
+				EXEC CreateIPCAccumulation @user_id = @user_id, @ipc_count = @individual_pension_coefficient, @year = @year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
+			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -617,13 +704,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		UPDATE Insurance_records
-		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
-		WHERE Insurance_exp_id = @id;
+		BEGIN TRANSACTION
+			DECLARE @old_insurance_record_IPC DECIMAL(6, 2) = (SELECT ir.Individual_pension_coefficient FROM Insurance_records as ir WHERE ir.Insurance_exp_id = @id)
 
-		SELECT CAST(1 AS BIT);
+			UPDATE Insurance_records
+			SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
+			WHERE Insurance_exp_id = @id;
+
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @user_id, @year = @year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc - @old_insurance_record_IPC + @individual_pension_coefficient)
+				EXEC UpdateIPCAccumulation @user_id = @user_id, @new_ipc_count = @new_IPC, @year = @year
+			END
+			ELSE 
+			BEGIN
+				EXEC CreateIPCAccumulation @user_id = @user_id, @ipc_count = @individual_pension_coefficient, @year = @year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
+			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -638,12 +748,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
+		BEGIN TRANSACTION
+			--CREATE TABLE #WorkRecordData (work_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			SELECT * INTO #InsuranceRecordData FROM Insurance_records as ir WHERE ir.Insurance_exp_id = @id
+			DECLARE @old_insurance_record_IPC DECIMAL(6, 2) = (SELECT d.IPC_count FROM #IPCData as d)
+			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #IPCData as d)
+			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #IPCData as d)
+
 			DELETE FROM Insurance_records
 			WHERE Insurance_exp_id = @id;
 
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @my_user_id, @year = @my_year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc - @old_insurance_record_IPC)
+				EXEC UpdateIPCAccumulation @user_id = @my_user_id, @new_ipc_count = @new_IPC, @year = @my_year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
 			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+		
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 4, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -714,12 +847,33 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		INSERT Military_records(User_id, Individual_pension_coefficient, Year)
-		VALUES (@user_id, @individual_pension_coefficient, @year);
+		BEGIN TRANSACTION
+			INSERT Military_records(User_id, Individual_pension_coefficient, Year)
+			VALUES (@user_id, @individual_pension_coefficient, @year);
 
-		SELECT CAST(1 AS BIT);
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @user_id, @year = @year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc + @individual_pension_coefficient)
+				EXEC UpdateIPCAccumulation @user_id = @user_id, @new_ipc_count = @new_IPC, @year = @year
+			END
+			ELSE 
+			BEGIN
+				EXEC CreateIPCAccumulation @user_id = @user_id, @ipc_count = @individual_pension_coefficient, @year = @year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
+			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -770,13 +924,36 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		UPDATE Military_records
-		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
-		WHERE Military_exp_id = @id;
+		BEGIN TRANSACTION
+			DECLARE @old_military_record_IPC DECIMAL(6, 2) = (SELECT mr.Individual_pension_coefficient FROM Military_records as mr WHERE mr.Military_exp_id = @id)
 
-		SELECT CAST(1 AS BIT);
+			UPDATE Military_records
+			SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
+			WHERE Military_exp_id = @id;
+
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @user_id, @year = @year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc - @old_military_record_IPC + @individual_pension_coefficient)
+				EXEC UpdateIPCAccumulation @user_id = @user_id, @new_ipc_count = @new_IPC, @year = @year
+			END
+			ELSE 
+			BEGIN
+				EXEC CreateIPCAccumulation @user_id = @user_id, @ipc_count = @individual_pension_coefficient, @year = @year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
+			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -791,12 +968,35 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
+		BEGIN TRANSACTION
+			--CREATE TABLE #WorkRecordData (work_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			SELECT * INTO #MilitaryRecordData FROM Military_records as mr WHERE mr.Military_exp_id= @id
+			DECLARE @old_military_record_IPC DECIMAL(6, 2) = (SELECT d.IPC_count FROM #IPCData as d)
+			DECLARE @my_user_id DECIMAL(6, 2) = (SELECT d.user_id FROM #IPCData as d)
+			DECLARE @my_year DECIMAL(6, 2) = (SELECT d.year FROM #IPCData as d)
+
 			DELETE FROM Military_records
 			WHERE Military_exp_id = @id;
 
+			CREATE TABLE #IPCData (acc_exp_id INT, user_id INT, IPC_count DECIMAL(6, 2), year INT)
+			INSERT INTO #IPCData EXEC dbo.GetIpcAccumulationData @user_id = @my_user_id, @year = @my_year;
+			DECLARE @cur_ipc DECIMAL(6, 2)
+			SET @cur_ipc = (SELECT IPC_count FROM #IPCData)
+			IF (@cur_ipc) IS NOT NULL
+			BEGIN
+				DECLARE @new_IPC DECIMAL(6, 2)
+				SET @new_IPC = (@cur_ipc - @old_military_record_IPC)
+				EXEC UpdateIPCAccumulation @user_id = @my_user_id, @new_ipc_count = @new_IPC, @year = @my_year
+			END
+				
+			DROP TABLE IF EXISTS #IPCData;
+
 			SELECT CAST(1 AS BIT);
+		COMMIT TRANSACTION
 	END TRY
 	BEGIN CATCH
+		ROLLBACK TRANSACTION
+
 		INSERT Error_logs(Error_datetime, Source_table_id, Details)
 		VALUES (GETDATE(), 5, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
 
@@ -869,8 +1069,8 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
-		INSERT Individual_pencion_coefficient_accumulation(User_id, Individual_pension_coefficient, Year, Record_id, Table_id)
-		VALUES (@user_id, @individual_pension_coefficient, @year, @record_id, @table_id);
+		INSERT Individual_pencion_coefficient_accumulation(User_id, Individual_pension_coefficient, Year)
+		VALUES (@user_id, @individual_pension_coefficient, @year);
 
 		SELECT CAST(1 AS BIT);
 	END TRY
@@ -920,15 +1120,13 @@ CREATE PROCEDURE dbo.UpdateIndividualPencionCoefficientAccumulation
 	@id INT,
 	@user_id INT,
 	@individual_pension_coefficient DECIMAL(6, 2),
-	@year INT,
-	@record_id INT,
-	@table_id INT
+	@year INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
 		UPDATE Individual_pencion_coefficient_accumulation
-		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year, Record_id = @record_id, Table_id = @table_id
+		SET User_id = @user_id, Individual_pension_coefficient = @individual_pension_coefficient, Year = @year
 		WHERE Accumulation_exp_id = @id;
 
 		SELECT CAST(1 AS BIT);
@@ -1116,4 +1314,161 @@ BEGIN
 END
 GO
 
+-- Individual_pension_coefficient_accumulation
+
+CREATE PROCEDURE dbo.CreateIPCAccumulation
+	@user_id INT,
+	@ipc_count DECIMAL(6,2),
+	@year INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		INSERT dbo.Individual_pencion_coefficient_accumulation(User_id, Individual_pension_coefficient, Year)
+		VALUES (@user_id, @ipc_count, @year);
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO 
+
+--EXEC CreateIPCAccumulation @user_id = 1, @ipc_count = 52.3, @year = 2020
+--EXEC CreateIPCAccumulation @user_id = 2, @ipc_count = 22.6, @year = 2020
+--EXEC CreateIPCAccumulation @user_id = 3, @ipc_count = 102.1, @year = 2020
+--EXEC CreateIPCAccumulation @user_id = 3, @ipc_count = 102.1, @year = 2019
+--EXEC CreateIPCAccumulation @user_id = 3, @ipc_count = 102.1, @year = 2021
+--EXEC CreateIPCAccumulation @user_id = 3, @ipc_count = 102.1, @year = 2018
+--EXEC CreateIPCAccumulation @user_id = 4, @ipc_count = 66.9, @year = 2020
+
+CREATE PROCEDURE dbo.UpdateIPCAccumulation
+	@user_id INT,
+	@year INT,
+	@new_ipc_count DECIMAL(6,2)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		DECLARE @cur_ipc DECIMAL(6,2)
+
+		SET @cur_ipc =
+		(	
+			SELECT TOP 1 ipc_ac.Individual_pension_coefficient 
+			FROM Individual_pencion_coefficient_accumulation as ipc_ac
+			WHERE ipc_ac.User_id = @user_id and ipc_ac.Year = @year
+		);
+
+		UPDATE Individual_pencion_coefficient_accumulation
+		SET Individual_pension_coefficient = @new_ipc_count 
+		WHERE User_id = @user_id and Year = @year;
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO 
+
+--EXEC UpdateIPCAccumulation @user_id = 3, @new_ipc_count = 211.2, @year = 2020
+
+CREATE PROCEDURE dbo.DeleteIPCAccumulation
+	@user_id INT,
+	@year INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		DELETE FROM Individual_pencion_coefficient_accumulation
+		WHERE User_id = @user_id and Year = @year
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO 
+
+--EXEC DeleteIPCAccumulation @user_id = 4, @year = 2020
+
+CREATE PROCEDURE dbo.GetLastIPCAccumulationData
+	@user_id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT TOP 1 * FROM Individual_pencion_coefficient_accumulation
+		WHERE User_id = @user_id
+		ORDER BY Year desc
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+--EXEC GetLastIPCAccumulationData @user_id = 3
+
+CREATE PROCEDURE dbo.GetIPCAccumulationData
+	@user_id INT,
+	@year INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	BEGIN TRY
+		SELECT TOP 1 * FROM Individual_pencion_coefficient_accumulation
+		WHERE User_id = @user_id and Year = @year
+		ORDER BY Year desc
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE dbo.GetDataForPensionCalculator
+	@user_id INT,
+	@year INT
+AS 
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		SELECT
+			c.First_name,
+			c.Last_name,
+			ipca.Individual_pension_coefficient,
+			rccby.Cost
+		FROM dbo.Users as u
+		LEFT JOIN Individual_pencion_coefficient_accumulation AS ipca
+			ON u.User_id = ipca.User_id
+		LEFT JOIN dbo.Clients as c
+			ON c.User_id = u.User_id
+		LEFT JOIN dbo.Ref_coefficients_cost_by_year as rccby
+			ON rccby.Year = ipca.Year
+		WHERE ipca.Year = @year AND u.User_id = @user_id
+	END TRY
+	BEGIN CATCH
+		INSERT Error_logs(Error_datetime, Source_table_id, Details)
+		VALUES (GETDATE(), 6, CONCAT('ERROR ', ERROR_NUMBER(), ': ', ERROR_MESSAGE()));
+	END CATCH
+END
+GO 
+
+
+--EXEC  @user_id = 1, @record_id = 2, @table_id = 6, @year = 2015;
+--SELECT * FROM Individual_pencion_coefficient_accumulation
+--SELECT * FROM Error_logs
+--SELECT * FROM Ref_coefficients_cost_by_year
+--SELECT * FROM Users
+--SELECT * FROM Ref_tables
+
+
 EXEC CreateUser @login = 'admin', @password = 'admin';
+EXEC CreateUser @login = 'Georgiy', @password = 'admin';
+EXEC CreateUser @login = 'Mikhail', @password = 'admin';
+EXEC CreateUser @login = 'Administrator', @password = 'admin';
+
+
+
